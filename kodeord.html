@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<h3>Kodeord?</h3>
+		<input id="password"></input> <button>LET ME INNNN!!!!!</button>
+		<p style="display: none;">Forkert kodeord...</p>
+	</body>
+	<script>
+		let timeoutID;
+	
+		document.querySelector("button").onclick = () => {
+			let pass = document.querySelector("input").value;
+			if (pass.trim().toLowerCase() == "tomato soup") {
+				document.cookie = "access=yes; SameSite=Lax; expires=Fri, 31 Dec 9999 23:59:59 GMT;";
+				
+				let queryParams = new URLSearchParams(window.location.search);
+				if (queryParams.has("redirect")) {
+					window.location.href = `${queryParams.get("redirect")}`;
+				}
+			} else {
+				clearTimeout(timeoutID);
+			
+				let incorrect = document.querySelector("p");
+				incorrect.style.display = "block";
+				timeoutID = setTimeout(() => {
+					incorrect.style.display = "none";
+				}, 2000);
+			}
+		};
+	</script>
+</html>
