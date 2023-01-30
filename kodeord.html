@@ -7,6 +7,12 @@
 	</body>
 	<script>
 		let timeoutID;
+		
+		document.querySelector("input").addEventListener("keypress", (e) => {
+			if (e.key == "Enter") {
+				document.querySelector("button").click();
+			}
+		});
 	
 		document.querySelector("button").onclick = () => {
 			let pass = document.querySelector("input").value;
