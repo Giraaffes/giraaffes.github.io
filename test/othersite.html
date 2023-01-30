@@ -3,8 +3,8 @@
 	<body>
 		<script>
 			if (document.cookie.search("access=yes") == -1) {
-				subpage = window.location.href.match(/.+(\/.+?)$/)[1];
-				window.location.href = `./passwordtest.html?redirect=${subpage}`
+				subpage = window.location.href.match(/github.io(\/.+)?$/)[1];
+				window.location.href = `./password.html?redirect=${subpage}`
 			}
 		</script>
 	</body>
