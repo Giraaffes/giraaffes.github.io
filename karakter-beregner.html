@@ -470,6 +470,7 @@
 
 				let avg = sum / weightSum;
 				let avgString = (Math.round(avg * 100) / 100).toFixed(2);
+				avgString = avgString.replace(".", ",");
 
 				$("#gennemsnit .value").text(anySupplied ? avgString : "-");
 			}
@@ -542,7 +543,9 @@
 					.click(niveauClicked)
 					.click(updateGennemsnit);
 
-				$(this).find(".remove-btn").click(removeClicked);
+				$(this).find(".remove-btn")
+					.click(removeClicked)
+					.click(updateGennemsnit);
 			}
 
 			$(".fag").each(initFag);
@@ -588,7 +591,9 @@
 				$("#custom-fag").scrollTop(0);
 			}
 
-			$("#add-fag-btn").click(addFag);
+			$("#add-fag-btn")
+				.click(addFag)
+				.click(updateGennemsnit);
 
 			$("#skabelon select").change(skabelonChanged).val("none");
 			$("#skabelon option").click(skabelonChanged);
