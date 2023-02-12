@@ -11,10 +11,14 @@
 			:root {
 				--gray1: #f8f8f8;
 				--gray2: #e8e8e8;
-				--gray3: #d5d5d5;
-				--border1: #222;
-				--border2: #666;
-				--border3: #999;
+				--gray3: #dddddd;
+				--gray4: #d4d4d4;
+				--border1: #222222;
+				--border2: #666666;
+				--border3: #999999;
+				--color: #317088;
+				--color-hover: #004e6c;
+				--invalid: #cc0000;
 			}
 
 			* {
@@ -49,11 +53,11 @@
 
 			.small-btn:hover {
 				cursor: pointer;
-				background: #eee;
+				background: var(--gray2);
 			}
 
 			.small-btn:active {
-				background: #ddd;
+				background: var(--gray3);
 			}
 
 			.small-btn > span {
@@ -63,15 +67,11 @@
 				user-select: none;
 
 				font-weight: 500;
-				color: #777;
-			}
-
-			.small-btn:hover > span {
-				color: #555;
+				color: var(--border2);
 			}
 
 			.small-btn:active > span {
-				color: #444;
+				color: var(--border1);
 			}
 
 			#add-fag-btn > span {
@@ -127,7 +127,7 @@
 
 			#skabelon select {
 				background: #fff;
-				border: #999 solid 1px;
+				border: var(--border3) solid 1px;
 				border-radius: 0.76rem;
 
 				width: 17rem;
@@ -138,7 +138,7 @@
 			}
 
 			#skabelon select:hover {
-				background: #f0f0f0;
+				background: var(--gray2);
 				cursor: pointer;
 			}
 
@@ -152,7 +152,7 @@
 				padding: 0 1.75rem;
 				background: #fff;
 				z-index: 2;
-				box-shadow: -10px 0 8px -4px #ffffff;
+				box-shadow: -10px 0 8px -4px #fff;
 
 				display: flex;
 				justify-content: space-between;
@@ -190,7 +190,7 @@
 
 			#gennemsnit {
 				height: 4rem;
-				background: #d5d5d5;
+				background: var(--gray4);
 				font-size: 1.3rem;
 
 				display: flex;
@@ -235,8 +235,8 @@
 
 
 			.fag {
-				background: #f8f8f8;
-				border: #666 solid 1px;
+				background: var(--gray1);
+				border: var(--border2) solid 1px;
 				border-radius: 1.2rem;
 
 				position: relative;
@@ -267,11 +267,11 @@
 			}
 
 			.fag input.navn:hover {
-				background: #e8e8e8;
+				background: var(--gray2);
 			}
 
 			.fag input.navn:focus {
-				background: #dddddd;
+				background: var(--gray3);
 				font-weight: normal;
 			}
 
@@ -282,7 +282,7 @@
 			}
 
 			.fag .niveau > button {
-				border: #999 solid 1px;
+				border: var(--border3) solid 1px;
 				border-radius: 0.5rem;
 				width: 2.1rem;
 				height: 2.1rem;
@@ -294,18 +294,18 @@
 			}
 
 			.fag .niveau > button:hover {
-				background: #ddd;
+				background: var(--gray2);
 				cursor: pointer;
 			}
 
 			.fag .niveau > button.selected {
-				border: #222 solid 2px;
+				border: var(--border1) solid 2px;
 				color: #fff;
-				background: #317088;
+				background: var(--color);
 			}
 
 			.fag .niveau > button.selected:hover {
-				background: #004e6c;
+				background: var(--color-hover);
 				cursor: pointer;
 			}
 
@@ -320,7 +320,7 @@
 			.fag .karakter > input {
 				border: none;
 				background: none;
-				border-bottom: #222 solid 2px;
+				border-bottom: var(--border1) solid 2px;
 				width: 2rem;
 				height: 2rem;
 				font-size: 1.5rem;
@@ -328,15 +328,15 @@
 			}
 
 			.fag .karakter > input.invalid {
-				border-bottom: #c00 solid 3px;
+				border-bottom: var(--invalid) solid 3px;
 			}
 
 			.fag .karakter > input:hover {
-				background: #e8e8e8;
+				background: var(--gray2);
 			}
 
 			.fag .karakter > input:focus {
-				background: #dddddd;
+				background: var(--gray3);
 			}
 
 			.fag > * {
