@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Test</title>
+	<meta charset="utf-8" />
+	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+    <style>
+		html, body {
+		  margin: 0;
+		  padding: 0;
+		}
+		canvas {
+		  display: block;
+		}
+	</style>
+  </head>
+  
+  <body>
+    <main id="canvas"></main>
+    <script>
+		function setup() {}
+	
+		function init(p_) {
+			let duration = 60;
+			let steps = 40;
+			let w1 = 100;
+			let w2 = 200;
+			let w3 = 150;
+
+			let v1, v2, p;
+
+			
+			p_.setup = function() { // 1800000 - 1864242
+			  p_.createCanvas(4503, 414);
+			  p_.noLoop();
+			  
+			  v1 = p_.createVector(250, 50);
+			  v2 = p_.createVector(250, 450);
+			  p = p_.createVector(0, 0);
+			}
+
+			p_.draw = function() {
+			  p_.background(0);
+			  
+			  p_.strokeWeight(2);
+			  p_.noFill();
+			  
+			  p_.stroke(255, 0, 0, 127);
+			  p_.beginShape();
+			  for (let i = 0; i < steps; i++) {
+				let t = i / (steps - 1);
+				let f = f1(t);
+				p_.vertex(f.x, f.y);
+			  }
+			  p_.endShape();
+			  
+			  p_.stroke(0, 255, 0, 127);
+			  p_.beginShape();
+			  for (let i = 0; i < steps; i++) {
+				let t = i / (steps - 1);
+				let f = f2(t);
+				p_.vertex(f.x, f.y);
+			  }
+			  p_.endShape();
+			  
+			  p_.stroke(0, 0, 255, 127);
+			  p_.beginShape();
+			  for (let i = 0; i < steps; i++) {
+				let t = i / (steps - 1);
+				let f = f3(t);
+				p_.vertex(f.x, f.y);
+			  }
+			  p_.endShape();
+			  
+			  p_.strokeWeight(4);
+			  p_.stroke(255);
+			  p_.point(v1);
+			  p_.point(v2);
+			}
+
+
+			function f1(t) {
+			  // Sine curve
+			  let l = p5.Vector.lerp(v1, v2, t);
+			  let c = p_.createVector(p_.sin(t * PI) * w1, 0);
+			  return p5.Vector.add(l, c);
+			}
+
+			function f2(t) {
+			  // Bezier curve
+			  let c = p5.Vector.lerp(v1, v2, 0.5).add(w2, 0);
+			  return p5.Vector.lerp(p5.Vector.lerp(v1, c, t), p5.Vector.lerp(c, v2, t), t);
+			}
+
+			function f3(t) {
+			  // Circle arc
+			  let c = p5.Vector.lerp(v1, v2, 0.5).add(-w3, 0);
+			  let diff = p5.Vector.sub(v2, c);
+			  let r = diff.mag();
+			  let a = p_.atan2(diff.y, diff.x);
+			  
+			  let at = p_.map(t, 0, 1, -a, a);
+			  return c.add(p_.cos(at)*r, p_.sin(at)*r);
+			}
+		}
+		
+		new p5(init, document.getElementById("canvas"));
+	</script>
+  </body>
+</html>

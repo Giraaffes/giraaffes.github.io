@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Ind i Numerologi</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body {
+				margin: 30px;
+				font-family: Montserrat;
+			}
+			
+			div {
+				display: block;
+			}
+			
+			p {
+				display: block;
+				margin: 0;
+			}
+			
+			p, label {
+				font-size: 14px;
+				line-height: 2.5;
+			}
+			
+			div.inl > label, div.inl > p {
+				display: inline-block;
+				margin-right: 5px;
+			}
+			
+			div.inl-nospace > p {
+				display: inline-block;
+			}
+			
+			.result {
+				font-weight: bold;	
+			}
+			
+			.expl {
+				white-space: pre-line;
+				line-height: 1.75;
+			}
+		</style>
+		
+		<script
+			  src="https://code.jquery.com/jquery-3.6.0.min.js"
+			  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			  crossorigin="anonymous">
+		</script>
+		<script>
+			const stjernetegn = [
+				[new Date(0, 0, 21), "Stenbukken"],
+				[new Date(0, 1, 20), "Vandmanden"],
+				[new Date(0, 2, 21), "Fisken"],
+				[new Date(0, 3, 21), "Vædderen"],
+				[new Date(0, 4, 22), "Tyren"],
+				[new Date(0, 5, 22), "Tvillingen"],
+				[new Date(0, 6, 23), "Krebsen"],
+				[new Date(0, 7, 24), "Løven"],
+				[new Date(0, 8, 24), "Jomfruen"],
+				[new Date(0, 9, 24), "Vægten"],
+				[new Date(0, 10, 24), "Skorpionen"],
+				[new Date(0, 11, 22), "Skytten"]
+			]
+			const måneder = {
+				"1": ["Solen", "identitet og individualitet"],
+				"2": ["Månen", "følelser og stemninger"],
+				"3": ["Jupiter", "udlængsel og horisonter"],
+				"4": ["Uranus", "opfindsomhed og fremsyn"],
+				"5": ["Merkur", "uddannelse og talegave"],
+				"6": ["Venus", "bekvemmelighed og følelser"],
+				"7": ["Neptun", "irrationalitet og ukonkrethed"],
+				"8": ["Saturn", "disciplin og koncentration"],
+				"9": ["Mars", "handlekraft og beslutsomhed"]
+			};
+			const letterValues = {
+				"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 8,
+				"g": 3, "h": 5, "i": 1, "j": 1, "k": 2, "l": 3,
+				"m": 4, "n": 5, "o": 7, "p": 8, "q": 1, "r": 2,
+				"s": 3, "t": 4, "u": 6, "v": 6, "w": 6, "x": 5,
+				"y": 1, "z": 7, "æ": 6, "ø": 7, "å": 1
+			};
+			const numeroskoper = {
+			  "10": [
+				"Skæbnehjulet",
+				"Når 10/1 er i balance kaldes den for kærlighedens hjul og handler om kærlighed til dig selv og andre\nDet er en healende energi, hvilket betyder at du er i stand til at heale dig selv indefra\nMed 10/1 oplever du meget glæde og nydelse i dit liv. Du har nærende kærlige relationer.\nDet er en energi der handler om skaberkraft og manifestation, så du er i stand til at skabe det i dit liv som du ønsker.",
+				"Når 10/1 er i ubalance er det skæbnehjulet, hjulet drejer med de andre vibrationer i numeroskopet og påvirkes af disse.\nAfhængig af hvad der ellers står i dit numeroskop kan det være en destruktiv og nedbrydende energi.\nDu kan føle dig meget forvirret og flyvsk.\nDu kan opleve at ting/projekter og relationer ofte afsluttes eller bryder sammen på en pludselig måde.\nDu kan opleve mangel på kærlighed til dig selv hvilket spejles i mangelfulde relatioenr."
+			  ],
+			  "11": [
+				"Den knyttede hånd",
+				"11/2 som navneenergi er altid ubalanceret.",
+				"Det er en energi der handler om tårer, skuffelser, skjulte prøvelser og grænser.\nMed 11/2 er du meget optaget af hvad andre synes, andres ros og anerkendelse fylder meget. Du er også meget optaget af hvordan andre har det, så meget at du ofte kommer til at overtræde dine egne grænser for at gøre andre glade.\nDu kan have en tendens til at dulme dine følelser (via fx overdreven indtag af stimulanser som mad, alkohol, søde sager etc. eller andre måder ikke at mærke på som overdreven arbejde eller motion etc.)\nOBS – denne vibration kan optræde i balance andre steder i et numeroskop i auraen eller som livstema, hvor den har en anden positiv betydning."
+			  ],
+			  "12": [
+				"Offertallet",
+				"12/3 er altid ubalanceret.",
+				"Offertallet. Offer for dine drømme. Offer for din frygt.\nMed 12/3 i dit liv, så kender du til, at det du bygger op i dit liv ofte smuldrer mellem dine hænder. Hvis det gennem hårdt arbejde alligevel er lykkes dig at nå dine mål, så står du ofte tilbage med en tom følelse af, at virkeligheden ikke lever op til forventningerne, så du må begynde forfra på en ny drøm igen.\nDu gør alt hvad du kan for at tage ansvar for dit liv, men det er som om at ydre omstændigheder hele tiden overtager og du bliver viklet ind i alt muligt, pres udefra eller drama, noget du må tage dig af, så du kommer væk fra den vej du var på vej ud af.\nFrygt for at miste. Du kender til at miste hvad du bygger op og kan have udviklet en frygt for at miste, hvilket fører til at du bekymrer dig for fremtiden og prøver at kontrollere tingenes udkom.\nDu kan også opleve at komme til at sabotere dig selv fordi du er bange for succes og den forandring og ansvar dette vil medføre."
+			  ],
+			  "13": [
+				"Forandringstallet",
+				"Når 13/4 er i balance er det en magisk energi. Oldtidens numerologer mente at “ham som forstår at bruge tallet 13 vil blive givet magt og herredømme”!\nDet er en meget kreativ og varm energi. Med 13/4 i balance er du meget kreativ og får mange spændende ideer, som du er rigtig god til at få handlet på og få ført ud i livet.\nDu er heldig i livet, sprudlende og skabende.\n13/4 indeholder healerevner som du kan bruge bevidst eller ubevidst.",
+				"Når 13/4 er i ubalance føler du dig snydt i livet, som om at græsset altid er lidt grønnere på den anden side. Der er mange hverdagsproblemer i dit liv, som du hele tiden må tage dig af, uventede ting som ramler, hvilket giver utryghed i hverdagen.\nDu har en meget kreativ side, som du dog ikke får brugt fordi der er så meget andet du hele tiden må tage dig af. Du kan opleve at have alt for mange ideer, som du ikke kan eller tør føre ud i livet eller at du er helt udtømt for kreativitet.\nDu mærker en udefinerbar længsel efter mere i livet."
+			  ],
+			  "14": [
+				"Medietallet",
+				"Når 14/5 er i balance er det en meget aktiv og sprudlende energi. Du er altid i gang med noget og altid igang med en udvikling.\nKommunikation og formidling er de store temaer. Du er meget talende, udtryksfuld og god til at formulere dig, enten mundtligt, skriftligt, kropsligt eller visuelt.\n14/5 handler også om penge og du har et talent omkring at tjene penge, handle, sælge eller købe med overskud.\nDu er meget social og har mange skønne og givende relationer i dit liv.\nDu er altid igang med en personlig udvikling.",
+				"Når 14/5 er i ubalance har du enten for meget energi, hvilket kan give stress eller slet ingen energi, hvilket giver stagnation.\nDu kan have store økonomiske problemer, at du ikke tjener nok penge, eller at du tjener godt, men pengene forsvinder lynhurtigt væk igen, som var der hul i din lomme.\n14/5 i ubalance kan betyder overfladiske og ligegyldige relationer.\nDu kan føle dig forvirret, rastløs og flyvsk.\nDu kan opleve vanskeligheder og blokeringer, når du prøver at udtrykke dig."
+			  ],
+			  "15": [
+				"Magikeren",
+				"15/6 som navneenergi er altid ubalanceret.",
+				"15/6 er en meget magisk vibration, som navneenergi får den dog for meget magt og tipper negativt.\nDer ligger store mængder kreativitet, kunsterisk sans og fortryllende formidlingsevner – dette vil dog ofte være sammen med et dramatisk temperament og manipulerende tendenser.\n15/6 er skuespillertallet, med denne navneenergi kan du let komme til at spille roller, også når du ikke er bevidst om det. Det gør det meget svært at mærke dig selv og meget svært at være følelsesmæssig autentisk, hvilket kan give identitetsproblemer.\nFysisk laver 15/6 ofte ballade og kan give en bred vifte af mærkelige fysiske symptomer.\nOBS – denne vibration kan optræde i balance andre steder i et numeroskop i auraen, centre eller som livstema, hvor den har en anden positiv betydning."
+			  ],
+			  "16": [
+				"Tårnet",
+				"16/7 er altid ubalanceret.",
+				"16/7 er den tungeste energi der findes numerologisk set.\nEnergien vibrerer med uventet voldsom forandring. 16/7 handler om at miste hvad man bygger op, miste det eller dem man holder af.\nAlting har en pris med 16/7. Ethvert valg er samtidig et fravalg og deri ligger smerten gemt. Når vi hele tiden mister, må fravælge, fratages, så klarer vi os gennem livet. Overlever livet. Det giver sår på sjælen. Hårdhed så andres holdes på afstand. 16/7 handler om tab og sår på sjælen\nFrygt, angst, kontrol.\n16/7 er en kaotisk energi, du lærer at navigere i kaos med denne energi, men det gør dig hård og kan på sigt lukke dit hjerte. Det er dog en styrke der dækker over en indre sårbarhed.\nGenerelt en lukkende energi, der også kan hæmme spirituel vækst.\nMed 16/7 er det læring gennem lidelse, at rejse sig fra ruiner."
+			  ],
+			  "17": [
+				"Magiens stjerne",
+				"Når 17/8 er i balance er det en smuk og åndelig energi.\nDet er en energi der hjælper dig med at hæve dig over vanskeligheder. Når der sker noget udfordrende i dit liv, så er du god til tage al læringen ud af det og vokse af oplevelsen.\n17/8 betyder en balance mellem det spirituelle/intuitive/følelsesmæssige og det jordiske/konkrete/kropslige.\nMed 17/8 i balance er du ægte og autentisk og stiller dig let frem for andre og lyser.\nDu sætter din signatur på alt du rører ved og trives med det spotlight der lyser på dig.\nSpiritualitet, synlighed og indre/ydre balance er de store temaer med denne energi.",
+				"Når 17/8 er i ubalance bliver du offer for den opmærksomhed du får. Du kan længes efter spotlight, men trives ikke godt med det.\nMange vanskeligheder og forhindringer, der er hele tiden noget der skal ordnes.\nVanskeligt/umuligt at tage sig af det hele, det bliver meget enten/eller, noget må gives sig, er aldrig i balance.\nDu er ikke autentisk, men skjuler ting for andre og/eller dig selv.\nDu kan opleve at være dybt spirituel eller at have begge fødder meget solidt plantet i jorden, men det opleves som svært at forene de to verdener."
+			  ],
+			  "18": [
+				"Ukontrollabel Marsenergi",
+				"18/9 er altid ubalanceret.",
+				"Energien indikerer familiære stridigheder, store konflikter, hvis følelsesmæssige bagage æder af systemet. Skuffelse. Misforståelse.\n18/9 handler om resultater, at ydre resultater værdsættes og ofte på bekostning af følelser og kroppen, hvilket fører til en knoklende tilgang til verden, arbejde arbejde arbejde.\nFølelsesmæssig ubalance, en ophobning af følelser og vrede. Du kan enten opleve at du har så meget skygge på vrede at du slet ikke mærker den eller at du nogen gange utilsigtet kommer til at eksplodere i hovedet på andre. Dette fører til at du gør dig endnu mere umage for at styre dit temperament, hvilket skaber en følelsesmæssig selvforstærkende ubalanceret cyklus.\nKroppens signaler overhøres let med 18/9. Du mærker ofte ikke fysiske symptomer på sygdom før de er voldsomme.\n18/9 handler om ikke at ville mærke, der er noget som er blevet lukket inde, blevet indkapslet.\nMaterialisme. Kontrol."
+			  ],
+			  "19": [
+				"Solens tal",
+				"Når 19/1 er i balance er det en meget fordelagtig og heldig vibration.\nLykke, held, succes, glæde, kærlighed, positivitet.\nSucces tal. Det siges, at ”alt hvad man rører ved bliver til guld” med 19/1. Planer lykkes med succes.\nDu er dygtig til at manifestere med dine positive tanker, god til altid at se det positive ved en situation. For dig kan alt altid vendes til noget godt og positivt, som du kan komme videre på.\nDu oplever at være heldig i livet, har medvind når du starter nye ting op.\nDu mærker livsglæde og har positive forventninger til fremtiden.",
+				"Når 19/1 er i ubalance oplever du stor uro, mentalt, kropsligt som følelsesmæssigt.\nDu kan være meget forvirret, have for mange tanker (mental overaktivitet), for mange ideer og drømme til at du ville kunne føre dem ud i livet, og en generel uro i systemet.\nDu kan opleve store problemer med at skabe vedvarende sunde projekter og økonomi og der er tendens til at opstartsfasen er langt mere lovende end udførelsesfasen og resultatet.\nMed denne navneenergi kan du opleve aspekter af den balancerede ende selvom den er i ubalance, hvis du kender til det hele, så vil energien være i ubalance."
+			  ],
+			  "20": [
+				"Vækkelsens tal",
+				"Når 20/2 er i balance er det en meget smuk energi omkring livsvej. Man finder altid sin vej i livet med 20/2, det er en engel der guider dig, så du lander på rette hylde.\n20/2 energien handler også om passion. At du mærker din passion og lader den fylde dit liv. Men det er passion på en rolig og tillidsfuld måde, da 20/2 altid har et højere formål.\nGenerelt er dit liv knyttet til store formål, når du bærer 20/2.\nDu oplever at have tillid til verden. Du er nærværende i dit liv, har tålmodighed og tillid til processen.",
+				"Når 20/2 er i ubalance kan det være svært at mærke din passion. Du kan derfor let komme til at vælge en vej i livet efter pligt og ikke efter din egen lyst. Det er som om der er noget andet der støjer så du ikke kan høre 20/2 englen der prøver at guide dig.\nDu kan opleve en del forvirring omkring din livsvej.\nDu kan være meget utålmodig og træffer spontane beslutninger der ikke ender godt."
+			  ],
+			  "21": [
+				"Magiens Krone",
+				"Når 21/3 er i balance er det en vibration der handler om fremskridt, held og succes.\nDu er ambitiøs og målbevidst. Gennem din urokkelige retning får du styrke.\nSpirituelle evner af forskellig karakter, du er oplyst.\nMed 21/3 følger et højt refleksionsniveau, du ser igennem sammenhænge gennem din intuitive analyse.\n21/3 er takket for rådgiveren, vejlederen og underviseren. Når 21/3 er i balance formår du at vejlede og råde andre med stor overbevisning og succes.",
+				"Når 21/3 er i ubalance kaldes den for en tunnel af lærdom. Lyset er hele tiden for enden af tunnelen, men uanset hvor hårdt du arbejder, så er det som om du aldrig kommer derud.\nHvis du har heddet denne navnevibration fra du var barn, har der sandsynligvis ikke været så meget leg i din barndom. Du har med stor sandsynlighed ageret som en lille voksen, med evner, refleksioner, ansvar og pligter der har været forud for din egentlige alder. 21/3 ubalanceret fra barnsben af henviser til mange prøvelser i de unge år.\nSom en voksen med 21/3 har du en meget stærk ansvars- og pligtfølelse (ofte det man kunne kalde overansvar).\nEnerigen indikerer styrke, men ofte på bekostning af glæde, da arbejde og knoklen fylder mest."
+			  ],
+			  "22": [
+				"Fjolset",
+				"22/4 er altid ubalanceret.",
+				"Oldtidens numerologer beskrev denne vibration som ”en god mand, forblændet af andres tåbeligheder, med en rygsæk på ryggen, fyldt med andres fejltagelser”.\n22/4 vibrerer med en udpræget godhed, en så omfattende godhed, der grænser til og ofte omfatter naivitet.\nDu vil det bedste for andre og ser det bedste i andre, men de fortjener det ikke altid. Du har tendens til at tilsidesætte dine egne behov for andres. 22/4 er et “pleasergen” eller udtrykker “behagesyge”. Du kommer til at overskride dine egne grænser igen og igen, fordi du er for god af dig.\nDu føler dig ofte snydt i livet, fordi dit store hjerte og godhed nemt bliver udnyttet/misbrugt af andre mennesker.\nSkuffelser, tårer og ærgrelser.\n22/4 er en meget svag energi, der forhindrer dig i at stå stærkt i din egen energi."
+			  ],
+			  "23": [
+				"Løvens kongelige stjerne",
+				"23/5 er en meget heldig vibration, der beskytter dig i livet.\nDet siges at 23/5 er som at have en engel på hver skulder, der guider og beskytter dig gennem livet. Hvis du er spirituelt åben kan du med 23/5 opleve at have let ved at kommunikere med den anden side, som med engle, guider og andre lysvæsner. Uanset om du er bevidst om det eller ej modtager du budskaber og hjælp oppefra.\nDe store temaer er kærlighed, tillid og beskyttelse.\n23/5 er også en fordelagtig vibration for business, penge, karriere og succes. Med 23/5 kan du opleve at tingene altid på forunderlig vis flasker sig eller såfremt du har tunge energier med, at du på trods af disse og på grund af 23/5 bliver reddet lige inden målstregen.",
+				"23/5 er en meget heldig vibration, den kan ikke optræde i ubalance, men i et numeroskop med tunge energier vil den have mindre plads ar folde sig ud på og hæmmes i vibrationen."
+			  ],
+			  "24": [
+				"Venusvibration",
+				"Når 24/6 er i balance er det en smuk feminin energi, der hjælper med hjerterelationer og parforhold.\nBalance i at give og modtage er det store tema med 24/6 og dette er både indenfor kærlighed, omsorg og penge.\n24/6 handler nemlig udover hjertelige sager også om økonomi og velstand. Du oplever økonomisk succes og drømme der udleves med succes.\n24/6 forøger evnen til at indgå i lykkelige parforhold og har en stærk magnetisk indflydelse på det modsatte køn.\nNår 24/6 er i balance er der altid en heldig fremtid og hjælpen fra andre mennesker kommer når der er brug for det – de rette hjælpere på det rette tidspunkt.",
+				"Når 24/6 er i ubalance kan du opleve store udsving i dine relationer, særligt de helt tætte relationer og parforholdet. Du er ofte den der bærer relationen og giver langt mere end du modtager. Du kan også opleve at tiltrække nogle virkelig usunde relationer, som efterlader dig med knust hjerte.\n24/6 handler også om din økonomi som kan være påvirket af energiens ubalance.\nDu kan opleve at have en helt fornuftig indtjening selvom 24/6 er i ubalance, men der er ofte økonomiske problemer på grund af overforbrug.\n24/6 i ubalance kan betyde at du mangler hjælpere og venner i dit liv eller følelsen af at den hjælp du modtager er nytteløs. Eventuel mangel på nære relationer.\nDu kan føle dig brugt og drænet.\nDu kan have svært ved at få virkeliggjort dine drømme med det niveau af succes du ønsker.\n24/6, 33/6 og 42/6 udtrykker den samme grundlæggende energi."
+			  ],
+			  "25": [
+				"Ansvarstallet",
+				"Når 25/7 er i balance er det en meget spirituel kreativ energi, der styrker din skaberkraft og evne til at manifestere.\nDu er meget kreativ og modtager let budskaber og ideer fra dine omgivelser og fra oven. Du har sans for detaljer.\nDu er god til at lytte til din intuition, så du kan stå stærkt i dig og mærke hvad der er det rigtige at gøre for dig i enhver situation.\nDu tager ansvar for din egen vibration og dit eget liv.\nMed 25/7 i balance er du god til at manifestere og kan opleve succes med penge.\nDu er god til at lære af dine fejl og kommer styrket videre.",
+				"Når 25/7 er i ubalance kan der være blokeringer på dine spirituelle kanaler, kreativitet og intuition. Du kan have svært ved at høre din intuition eller også stoler du ikke på den.\n25/7 er også en såkaldt ”voksen-vibration”, fordi når man hedder den fra barnsben af i et uharmonisk numeroskop, så kan barndommen blive en voksenverden. 25/7 børn bliver ofte pålagt, eller pålægger sig selv, ansvar og pligter, som ikke er alderssvarende.\nNår du tager denne vibration med dig ind i voksenlivet tager du meget ansvar, ofte overansvar hvilket skaber en ufrivillig knokle tendens.meget knoklende adfærd. Perfektionisme.\nDu lærer ikke let af sine fejl, men kommer ofte til at gøre det samme igen og igen.\n25/7 og 34/7 udtrykker den samme grundlæggende energi."
+			  ],
+			  "26": [
+				"Dårlige råd",
+				"26/8 er altid ubalanceret.",
+				"Med 26/8 i dit liv oplever du vanskeligheder i partnerskaber af forskellige slags.\nDer er en særlig tendens til at tiltrække dårlige råd fra andre personer. Du kan opleve at blive snydt og bedraget, både i kærlighedsforhold og i økonomiske samt karrieremæssige sager.\n26/8 tiltrækker personer, som viser sig at være upålidelige, du kan opleve at andre på den ene eller anden facon bruger dig til at opnå noget de selv ønsker.\nMaterielt og økonomisk er 26/8 ikke en heldig vibration.\nDet der sker, når man har haft den vibration i mange år, er at man vænner sig til at andre mennesker ikke altid er til at stole på – man er lidt på vagt, hvilket over en længere periode fører til udmattelse af krop og sind og en psykisk og kropslig mangel på energi.\n26/8, 35/8 og 44/8 udtrykker den samme grundlæggende energi."
+			  ],
+			  "27": [
+				"Scepteret",
+				"Når 27/9 er i balance er det en meget stærk og handlekraftig energi. Du er god til at færdiggøre dine projekter og opnår de ønskede resultater med succes.\nMarsenergi, handlekraft og fuldførelse er de store temaer. Du er god til at handle på ting, sætte handling bag dine ord.\nDer ligger en kreativ skaberkraft i 27/9, som er koblet med selvtillid, power, styrke.\n27/9 symboliseres ved et scepter, der lover personen der bærer den autoritet, magt og herredømme, som en konge der regerer sit land!\nDu er din egen autoritet og kan skabe målbare resultater. Du står i din styrke og udtrykker let dine følelser og oplevelser.",
+				"Når 27/9 er i ubalance kan du opleve, at du er fuldstændig handlingslammet, har store problemer med at overholde deadlines og i det hele taget har problemer med at få gjort ting færdige.\nDu kan dog også opleve, at energien er i ubalance på den modsatte måde alt efter hvad der ellers står i dit personlige numeroskop: Når 27/9 energien boostes bliver marsenergien ustyrlig og får næsten samme betydning som navneenergien 18/9 (læs evt. herover). Her vil du opleve, at du arbejder meget og har et overdrevet fokus på resultater fremfor processen, så det hele bliver meget knoklende og hårdt.\nUbalanceret følelsesliv og temperament.\nNår 27/9 er i ubalance mærker kan det være svært at høre kroppens og hjertets signaler. Vrede og sorg kan i yderste instans undertrykkes, som så til tider kan komme voldsomt ud, når en dråbe får bægeret til at flyde over.\n27/9, 36/9 og 45/9 udtrykker den samme grundlæggende energi."
+			  ],
+			  "28": [
+				"Lammet og Løven",
+				"28/1 er altid ubalanceret.",
+				"Det lille tillidsfulde lam, der stoler blindt på andre, som med tiden kan udvikle sig til en aggressiv løve.\nDu kan have udviklet ”spidse albuer” med denne energi som en slags overlevelsesstrategi fordi du oplever at tingene går galt og du må presse dig fremefter.\n(Det er dog ikke alle med 28/1 der gør dette, nogle vedbliver med at være det lille lam.)\nMed 28/1 i sit numeroskop har du ofte tillid til personer, som ikke nødvendigvis vil dig det godt, men som bruger dig som et middel til deres mål.\nLøftebrud, både over for én selv og fra ens omgivelser.\n28/1 er en uheldig vibration, der giver uheld i konkurrencer, man taber ofte hvad man stiller op i og den giver tab ved domfældelse.\nDer er store tab forbundet med det her tal. Du kan opleve, at du må starte forfra i livet en eller flere gange bedst som fremtidsudsigterne var så lovende, som et tæppe der bliver revet væk under dig."
+			  ],
+			  "29": [
+				"Usikkerhedstallet",
+				"29/2 er altid ubalanceret.",
+				"Svaghed og lav vibration. Usikkerhed og tillidsbrud.\nMed 29/2 i dit liv tiltrækker du upålidelige personer, som bringer sorg og skuffelser i livet. Energien tiltrækker vanskeligheder og bedrag.\nDu er meget blid og gør alt af et rent hjerte, men oplever gang på gang at blive udnyttet af andre på trods af alle dine gode og rene hensigter.\nDu kan ofte komme i tvivl om du nu er god nok som du er. Det store problem med denne her navnevibration er, at fordi du kan opleve denne usikkerhed, så kan du være tilbøjelig til at tro på andres luftkasteller.\nDer er substantiel sorg og angst forbundet med 29/2, ofte forårsaget af det modsatte køn, kærlighedssorger.\nDet er et tal med advarsler omkring alle områder i det personlige liv og karrieren.\n(Det eneste forsonende der er at sige om 29/2 er, at det er en så svag energi, at den i mange numeroskoper tromles af de andre energier, så den kommer mindre til udtryk.)\n29/2, 38/2 og 47/2 udtrykker den samme grundlæggende energi."
+			  ],
+			  "30": [
+				"Retrospektion",
+				"30/3 er altid ubalanceret.",
+				"Tallet for retrospektion. Tilbageblik, tanker, fortrydelse.\nMed 30/3 i dit liv kan du opleve at være meget optaget af fortiden og du kan bruge meget tid og mange tanker på at komme med dybsindige konklusioner om skete ting. Energien trækkes hele tiden bagud med 30/3, hvilket hindrer dig i at være til stede i nuet. Du kan sidde fast i tanker om hvad der kunne have været.\nMed 30/3 er du sikkert god til at analysere, reflektere og regne ting ud rationelt. Med energien indeholder også modstand på nye input, fordi vibrationen handler meget om fortiden og ikke så meget om nyt og fremtiden, udover bekymring omkring hvad der kan komme til at ske. På den måde er det en lidt tung energi, fordi den holder dit fokus fast på det gamle fremfor at skabe. 30/3 skaber stagnation og stilstand.\nDu kan med denne energi have tendens til at være lidt en enspænder og ønske ro med dine tanker frem for sociale relationer.\nSpirituel lukkethed. Du kan opleve at få lukket ned for det spirituelle, fordi 30/3 gerne vil stå stille og ikke gider at åbne op for nye forståelser af verden. Logikken og analysen fylder meget og ofte langt mere end det intuitive.\n30/3, 39/3 og 48/3 udtrykker den samme grundlæggende energi."
+			  ],
+			  "31": [
+				"Eneboeren",
+				"31/4 er altid ubalanceret.",
+				"Tallet for eneboeren, geniet og den helt brilliante hjerne der kan have så svært ved at være i verden.\nDu har formentlig et helt særligt talent (om end måske et uopdaget og ganske undervurderet talent) med 31/4 i dit liv – men dette kan have skabt en grundlæggende følelse af ikke at passe ind.\nDu kender til at føle dig anderledes. Du kan føle dig misforstået af andre mennesker, eller måske ligefrem føle dig som det sorte får i familien eller andre relationer.\nSelv i livlige og deltagende sociale sammenhænge kan du sidde med en indre følelse af isolation, af fremmedhed.\nMed tiden kan du begynde at trække dig fra sociale sammenhænge (fordi du ikke får noget ud af det alligevel, men blot bliver bekræftet i at du ikke passer ind), isolerer dig fra andre, hvilket fører til ensomhed. Det bliver en selvopfyldende profeti om at man jo ikke er god nok, og man er anderledes, og de andre kan aldrig forstå mig, hvilket fører til mere indesluttethed.\nPå grund af dette trækker de fleste der hedder 31/4 sig på et eller andet tidspunkt fra samfundet og lever alene, gerne uforstyrret i fred og ro med megen natur, eller det kan være en familie der lukker sig om sig selv.\nDu kan have stærke holdninger, måske endda mange politiske overbevisninger og/eller holdninger samt ønsker og forslag til forandringer, men kan have svært ved at implementere forandring i dit eget liv.\nMaterielt og økonomisk er 31/4 ikke heldigt, den er lukket om sig selv.\n31/4, 40/4 og 49/4 udtrykker den samme grundlæggende energi."
+			  ],
+			  "32": [
+				"Kommunikation",
+				"Når 32/5 er i balance er det tallet for magnetisk fængslende kommunikation. Du er dygtig til at formidle og kan påvirke og nærmest fortrylle dem du taler til.\nDe store temaer er kommunikation, salg, penge og handel samt alle former for formidling som undervisning, reklame, radio og tv samt skrivning og diverse udgivelser. Du er god til at videreformidle budskaber på en letforståelig måde.\n32/5 er en magisk pengevibration og kan være et rigtig godt business tal, der støtter op omkring handel og salg både i ind- og udland.\nDu er god til at tjene penge og oplever flow i økonomi og held med investeringer. Du er fleksibel og god til at samarbejde, hvilket giver gode resultater.\nSammenslutninger af mennesker, grupper, fællesskaber. Du er god til at samle mennesker og indgå i givende fællesskaber af forskellig art.\nDu oplever held med dine relationer helt generelt, herunder også i kærligheden.",
+				"Når 32/5 er i ubalance oplever du udfordringer med kommunikation. Du kan opleve at det er svært at trænge igennem med dine budskaber hvor du ønsker.\nDu kan opleve problemer med penge, at det er svært at tjene nok til et overskud eller du kan opleve meget store udsving i din økonomi.\nNår 32/5 er i ubalance kan der være knas i relationerne. Du kan komme til at tiltrække grupper der ikke er harmoniske, hvor fællesskabsfølelsen mangler og fleksibiliteten er på nul hvilket hæmmer enhver udvikling.\nUheld i kærlighed.\n(Obs. når 32/5 er i ubalance kan der være balance inden for nogle af disse elementer og balance inden for andre.)\n32/5, 41/5 og 50/5 udtrykker den samme grundlæggende energi."
+			  ],
+			  "33": [
+				"Venusvibration",
+				"Når 33/6 er i balance er det en smuk feminin energi, der hjælper med hjerterelationer og parforhold.\nBalance i at give og modtage er det store tema med 24/6 og dette er både indenfor kærlighed, omsorg og penge.\n33/6 handler nemlig udover hjertelige sager også om økonomi og velstand. Du oplever økonomisk succes og drømme der udleves med succes.\n33/6 forøger evnen til at indgå i lykkelige parforhold og har en stærk magnetisk indflydelse på det modsatte køn.\nNår 33/6 er i balance er der altid en heldig fremtid og hjælpen fra andre mennesker kommer når der er brug for det – de rette hjælpere på det rette tidspunkt.",
+				"Når 33/6 er i ubalance kan du opleve store udsving i dine relationer, særligt de helt tætte relationer og parforholdet. Du er ofte den der bærer relationen og giver langt mere end du modtager. Du kan også opleve at tiltrække nogle virkelig usunde relationer, som efterlader dig med knust hjerte.\n33/6 handler også om din økonomi som kan være påvirket af energiens ubalance.\nDu kan opleve at have en helt fornuftig indtjening selvom 33/6 er i ubalance, men der er ofte økonomiske problemer på grund af overforbrug.\n33/6 i ubalance kan betyde at du mangler hjælpere og venner i dit liv eller følelsen af at den hjælp du modtager er nytteløs. Eventuel mangel på nære relationer.\nDu kan føle dig brugt og drænet.\nDu kan have svært ved at få virkeliggjort dine drømme med det niveau af succes du ønsker.\n24/6, 33/6 og 42/6 udtrykker den samme grundlæggende energi."
+			  ],
+			  "34": [
+				"Ansvarstallet",
+				"Når 34/7 er i balance er det en meget spirituel kreativ energi, der styrker din skaberkraft og evne til at manifestere.\nDu er meget kreativ og modtager let budskaber og ideer fra dine omgivelser og fra oven. Du har sans for detaljer.\nDu er god til at lytte til din intuition, så du kan stå stærkt i dig og mærke hvad der er det rigtige at gøre for dig i enhver situation.\nDu tager ansvar for din egen vibration og dit eget liv.\nMed 34/7 i balance er du god til at manifestere og kan opleve succes med penge.\nDu er god til at lære af dine fejl og kommer styrket videre.",
+				"Når 34/7 er i ubalance kan der være blokeringer på dine spirituelle kanaler, kreativitet og intuition. Du kan have svært ved at høre din intuition eller også stoler du ikke på den.\n34/7 er også en såkaldt ”voksen-vibration”, fordi når man hedder den fra barnsben af i et uharmonisk numeroskop, så kan barndommen blive en voksenverden. 34/7 børn bliver ofte pålagt, eller pålægger sig selv, ansvar og pligter, som ikke er alderssvarende.\nNår du tager denne vibration med dig ind i voksenlivet tager du meget ansvar, ofte overansvar hvilket skaber en ufrivillig knokle tendens.meget knoklende adfærd. Perfektionisme.\nDu lærer ikke let af sine fejl, men kommer ofte til at gøre det samme igen og igen.\n25/7 og 34/7 udtrykker den samme grundlæggende energi."
+			  ],
+			  "35": [
+				"Dårlige råd",
+				"35/8 er altid ubalanceret.",
+				"Med 35/8 i dit liv oplever du vanskeligheder i partnerskaber af forskellige slags.\nDer er en særlig tendens til at tiltrække dårlige råd fra andre personer. Du kan opleve at blive snydt og bedraget, både i kærlighedsforhold og i økonomiske samt karrieremæssige sager.\n35/8 tiltrækker personer, som viser sig at være upålidelige, du kan opleve at andre på den ene eller anden facon bruger dig til at opnå noget de selv ønsker.\nMaterielt og økonomisk er 35/8 ikke en heldig vibration.\nDet der sker, når man har haft den vibration i mange år, er at man vænner sig til at andre mennesker ikke altid er til at stole på – man er lidt på vagt, hvilket over en længere periode fører til udmattelse af krop og sind og en psykisk og kropslig mangel på energi.\n26/8, 35/8 og 44/8 udtrykker den samme grundlæggende energi."
+			  ],
+			  "36": [
+				"Scepteret",
+				"Når 36/9 er i balance er det en meget stærk og handlekraftig energi. Du er god til at færdiggøre dine projekter og opnår de ønskede resultater med succes.\nMarsenergi, handlekraft og fuldførelse er de store temaer. Du er god til at handle på ting, sætte handling bag dine ord.\nDer ligger en kreativ skaberkraft i 36/9, som er koblet med selvtillid, power, styrke.\n36/9 symboliseres ved et scepter, der lover personen der bærer den autoritet, magt og herredømme, som en konge der regerer sit land!\nDu er din egen autoritet og kan skabe målbare resultater. Du står i din styrke og udtrykker let dine følelser og oplevelser.",
+				"Når 36/9 er i ubalance kan du opleve, at du er fuldstændig handlingslammet, har store problemer med at overholde deadlines og i det hele taget har problemer med at få gjort ting færdige.\nDu kan dog også opleve, at energien er i ubalance på den modsatte måde alt efter hvad der ellers står i dit personlige numeroskop: Når 36/9 energien boostes bliver marsenergien ustyrlig og får næsten samme betydning som navneenergien 18/9 (læs evt. herover). Her vil du opleve, at du arbejder meget og har et overdrevet fokus på resultater fremfor processen, så det hele bliver meget knoklende og hårdt.\nUbalanceret følelsesliv og temperament.\nNår 36/9 er i ubalance mærker kan det være svært at høre kroppens og hjertets signaler. Vrede og sorg kan i yderste instans undertrykkes, som så til tider kan komme voldsomt ud, når en dråbe får bægeret til at flyde over.\n27/9, 36/9 og 45/9 udtrykker den samme grundlæggende energi."
+			  ],
+			  "37": [
+				"Lotusblomsten",
+				"Når 37/1 er i balance oplever du held med forretninger, karriere og alt med penge.\n37/1 støtter dig i fællesskaber, venskaber, netværk og partnerskaber af enhver slags, både privat og arbejdsmæssigt, men det er altid relationer der forbindes gennem hjertechakraet.\nLotusblomsten og hjerterelationer.\nLotusblomsten symboliserer denne energi, fordi 37/1 er en meget hjerteåbnende energi, der relaterer til hjertechakraet, der visuelt ligner en lotusblomst. Du har et åbent hjerte og er i stand til at indgå i dybe nærende relationer.\nKærlighed, romantik, intimitet og sex i parforholdet. Du tiltrækker parforhold hvor det intime både er følelsesmæssigt og fysisk, hvor kærlighed og intimitet går hånd i hånd.\nGlæde og lyst til livet.",
+				"Når 37/1 er i ubalance kan du opleve problemer med forretninger og penge. Mangel på flow i økonomi, vekslen mellem høj og lav konjunktur.\nDu kan have vanskeligheder med partnerskaber, arbejdsmæssigt og/eller privat. Du mangler støtte hos dit netværk og venner, eller oplever en mangel på fællesskaber i dit liv. Du kan opleve en mangel på nærende relationer og føle dig ensom.\nDu kan opleve seksuel ubalance (fx manglende lyst, stor lyst, sex uden følelser).\nNår 37/1 er i ubalance kan det indikere et mere eller mindre lukket hjertechakra. Du kan opleve problemer med at åbne op følelsesmæssigt.\nMangel på glæde og lyst.\n(Obs. når 37/1 er i ubalance kan der være balance inden for nogle af disse elementer og balance inden for andre.)\n37/1 og 46/1 udtrykker den samme grundlæggende energi."
+			  ],
+			  "38": [
+				"Usikkerhedstallet",
+				"38/2 er altid ubalanceret.",
+				"Svaghed og lav vibration. Usikkerhed og tillidsbrud.\nMed 38/2 i dit liv tiltrækker du upålidelige personer, som bringer sorg og skuffelser i livet. Energien tiltrækker vanskeligheder og bedrag.\nDu er meget blid og gør alt af et rent hjerte, men oplever gang på gang at blive udnyttet af andre på trods af alle dine gode og rene hensigter.\nDu kan ofte komme i tvivl om du nu er god nok som du er. Det store problem med denne her navnevibration er, at fordi du kan opleve denne usikkerhed, så kan du være tilbøjelig til at tro på andres luftkasteller.\nDer er substantiel sorg og angst forbundet med 38/2, ofte forårsaget af det modsatte køn, kærlighedssorger.\nDet er et tal med advarsler omkring alle områder i det personlige liv og karrieren.\n(Det eneste forsonende der er at sige om 38/2 er, at det er en så svag energi, at den i mange numeroskoper tromles af de andre energier, så den kommer mindre til udtryk.)\n29/2, 38/2 og 47/2 udtrykker den samme grundlæggende energi."
+			  ],
+			  "39": [
+				"Retrospektion",
+				"39/3 er altid ubalanceret.",
+				"Tallet for retrospektion. Tilbageblik, tanker, fortrydelse.\nMed 39/3 i dit liv kan du opleve at være meget optaget af fortiden og du kan bruge meget tid og mange tanker på at komme med dybsindige konklusioner om skete ting. Energien trækkes hele tiden bagud med 39/3, hvilket hindrer dig i at være til stede i nuet. Du kan sidde fast i tanker om hvad der kunne have været.\nMed 39/3 er du sikkert god til at analysere, reflektere og regne ting ud rationelt. Med energien indeholder også modstand på nye input, fordi vibrationen handler meget om fortiden og ikke så meget om nyt og fremtiden, udover bekymring omkring hvad der kan komme til at ske. På den måde er det en lidt tung energi, fordi den holder dit fokus fast på det gamle fremfor at skabe. 39/3 skaber stagnation og stilstand.\nDu kan med denne energi have tendens til at være lidt en enspænder og ønske ro med dine tanker frem for sociale relationer.\nSpirituel lukkethed. Du kan opleve at få lukket ned for det spirituelle, fordi 39/3 gerne vil stå stille og ikke gider at åbne op for nye forståelser af verden. Logikken og analysen fylder meget og ofte langt mere end det intuitive.\n30/3, 39/3 og 48/3 udtrykker den samme grundlæggende energi."
+			  ],
+			  "40": [
+				"Eneboeren",
+				"40/4 er altid ubalanceret.",
+				"Tallet for eneboeren, geniet og den helt brilliante hjerne der kan have så svært ved at være i verden.\nDu har formentlig et helt særligt talent (om end måske et uopdaget og ganske undervurderet talent) med 40/4 i dit liv – men dette kan have skabt en grundlæggende følelse af ikke at passe ind.\nDu kender til at føle dig anderledes. Du kan føle dig misforstået af andre mennesker, eller måske ligefrem føle dig som det sorte får i familien eller andre relationer.\nSelv i livlige og deltagende sociale sammenhænge kan du sidde med en indre følelse af isolation, af fremmedhed.\nMed tiden kan du begynde at trække dig fra sociale sammenhænge (fordi du ikke får noget ud af det alligevel, men blot bliver bekræftet i at du ikke passer ind), isolerer dig fra andre, hvilket fører til ensomhed. Det bliver en selvopfyldende profeti om at man jo ikke er god nok, og man er anderledes, og de andre kan aldrig forstå mig, hvilket fører til mere indesluttethed.\nPå grund af dette trækker de fleste der hedder 40/4 sig på et eller andet tidspunkt fra samfundet og lever alene, gerne uforstyrret i fred og ro med megen natur, eller det kan være en familie der lukker sig om sig selv.\nDu kan have stærke holdninger, måske endda mange politiske overbevisninger og/eller holdninger samt ønsker og forslag til forandringer, men kan have svært ved at implementere forandring i dit eget liv.\nMaterielt og økonomisk er 40/4 ikke heldigt, den er lukket om sig selv.\n31/4, 40/4 og 49/4 udtrykker den samme grundlæggende energi."
+			  ],
+			  "41": [
+				"Kommunikation",
+				"Når 41/5 er i balance er det tallet for magnetisk fængslende kommunikation. Du er dygtig til at formidle og kan påvirke og nærmest fortrylle dem du taler til.\nDe store temaer er kommunikation, salg, penge og handel samt alle former for formidling som undervisning, reklame, radio og tv samt skrivning og diverse udgivelser. Du er god til at videreformidle budskaber på en letforståelig måde.\n41/5 er en magisk pengevibration og kan være et rigtig godt business tal, der støtter op omkring handel og salg både i ind- og udland.\nDu er god til at tjene penge og oplever flow i økonomi og held med investeringer. Du er fleksibel og god til at samarbejde, hvilket giver gode resultater.\nSammenslutninger af mennesker, grupper, fællesskaber. Du er god til at samle mennesker og indgå i givende fællesskaber af forskellig art.\nDu oplever held med dine relationer helt generelt, herunder også i kærligheden.",
+				"Når 41/5 er i ubalance oplever du udfordringer med kommunikation. Du kan opleve at det er svært at trænge igennem med dine budskaber hvor du ønsker.\nDu kan opleve problemer med penge, at det er svært at tjene nok til et overskud eller du kan opleve meget store udsving i din økonomi.\nNår 41/5 er i ubalance kan der være knas i relationerne. Du kan komme til at tiltrække grupper der ikke er harmoniske, hvor fællesskabsfølelsen mangler og fleksibiliteten er på nul hvilket hæmmer enhver udvikling.\nUheld i kærlighed.\n(Obs. når 41/5 er i ubalance kan der være balance inden for nogle af disse elementer og balance inden for andre.)\n32/5, 41/5 og 50/5 udtrykker den samme grundlæggende energi."
+			  ],
+			  "42": [
+				"Venusvibration",
+				"Når 42/6 er i balance er det en smuk feminin energi, der hjælper med hjerterelationer og parforhold.\nBalance i at give og modtage er det store tema med 42/6 og dette er både indenfor kærlighed, omsorg og penge.\n42/6 handler nemlig udover hjertelige sager også om økonomi og velstand. Du oplever økonomisk succes og drømme der udleves med succes.\n42/6 forøger evnen til at indgå i lykkelige parforhold og har en stærk magnetisk indflydelse på det modsatte køn.\nNår 42/6 er i balance er der altid en heldig fremtid og hjælpen fra andre mennesker kommer når der er brug for det – de rette hjælpere på det rette tidspunkt.",
+				"Når 42/6 er i ubalance kan du opleve store udsving i dine relationer, særligt de helt tætte relationer og parforholdet. Du er ofte den der bærer relationen og giver langt mere end du modtager. Du kan også opleve at tiltrække nogle virkelig usunde relationer, som efterlader dig med knust hjerte.\n42/6 handler også om din økonomi som kan være påvirket af energiens ubalance.\nDu kan opleve at have en helt fornuftig indtjening selvom 42/6 er i ubalance, men der er ofte økonomiske problemer på grund af overforbrug.\n42/6 i ubalance kan betyde at du mangler hjælpere og venner i dit liv eller følelsen af at den hjælp du modtager er nytteløs. Eventuel mangel på nære relationer.\nDu kan føle dig brugt og drænet.\nDu kan have svært ved at få virkeliggjort dine drømme med det niveau af succes du ønsker.\n24/6, 33/6 og 42/6 udtrykker den samme grundlæggende energi."
+			  ],
+			  "43": [
+				"Ustyrlige omvæltninger",
+				"43/7 er altid ubalanceret.",
+				"43/7 er en energi, der skaber omvæltninger i livet. Som lynet fra en klar himmel, der slår ned og ødelægger.\nDu kender til at blive kastet ud i pludselige og uventede situationer. Uro, kaos og ødelæggelse er temaerne med denne energi.\nDet er en ustyrlig kraft, der laver forstyrrelser og forhindringer.\nDu kan opleve gentagne skuffelser og fiaskoer med 43/7 i dit liv.\n43/7 og 52/7 udtrykker den samme grundlæggende energi."
+			  ],
+			  "44": [
+				"Dårlige råd",
+				"44/8 er altid ubalanceret.",
+				"Med 44/8 i dit liv oplever du vanskeligheder i partnerskaber af forskellige slags.\nDer er en særlig tendens til at tiltrække dårlige råd fra andre personer. Du kan opleve at blive snydt og bedraget, både i kærlighedsforhold og i økonomiske samt karrieremæssige sager.\n44/8 tiltrækker personer, som viser sig at være upålidelige, du kan opleve at andre på den ene eller anden facon bruger dig til at opnå noget de selv ønsker.\nMaterielt og økonomisk er 44/8 ikke en heldig vibration.\nDet der sker, når man har haft den vibration i mange år, er at man vænner sig til at andre mennesker ikke altid er til at stole på – man er lidt på vagt, hvilket over en længere periode fører til udmattelse af krop og sind og en psykisk og kropslig mangel på energi.\n26/8, 35/8 og 44/8 udtrykker den samme grundlæggende energi."
+			  ],
+			  "45": [
+				"Scepteret",
+				"Når 45/9 er i balance er det en meget stærk og handlekraftig energi. Du er god til at færdiggøre dine projekter og opnår de ønskede resultater med succes.\nMarsenergi, handlekraft og fuldførelse er de store temaer. Du er god til at handle på ting, sætte handling bag dine ord.\nDer ligger en kreativ skaberkraft i 45/9, som er koblet med selvtillid, power, styrke.\n45/9 symboliseres ved et scepter, der lover personen der bærer den autoritet, magt og herredømme, som en konge der regerer sit land!\nDu er din egen autoritet og kan skabe målbare resultater. Du står i din styrke og udtrykker let dine følelser og oplevelser.",
+				"Når 45/9 er i ubalance kan du opleve, at du er fuldstændig handlingslammet, har store problemer med at overholde deadlines og i det hele taget har problemer med at få gjort ting færdige.\nDu kan dog også opleve, at energien er i ubalance på den modsatte måde alt efter hvad der ellers står i dit personlige numeroskop: Når 45/9 energien boostes bliver marsenergien ustyrlig og får næsten samme betydning som navneenergien 18/9 (læs evt. herover). Her vil du opleve, at du arbejder meget og har et overdrevet fokus på resultater fremfor processen, så det hele bliver meget knoklende og hårdt.\nUbalanceret følelsesliv og temperament.\nNår 45/9 er i ubalance mærker kan det være svært at høre kroppens og hjertets signaler. Vrede og sorg kan i yderste instans undertrykkes, som så til tider kan komme voldsomt ud, når en dråbe får bægeret til at flyde over.\n27/9, 36/9 og 45/9 udtrykker den samme grundlæggende energi."
+			  ],
+			  "46": [
+				"Lotusblomsten",
+				"Når 46/1 er i balance oplever du held med forretninger, karriere og alt med penge.\n46/1 støtter dig i fællesskaber, venskaber, netværk og partnerskaber af enhver slags, både privat og arbejdsmæssigt, men det er altid relationer der forbindes gennem hjertechakraet.\nLotusblomsten og hjerterelationer.\nLotusblomsten symboliserer denne energi, fordi 46/1 er en meget hjerteåbnende energi, der relaterer til hjertechakraet, der visuelt ligner en lotusblomst. Du har et åbent hjerte og er i stand til at indgå i dybe nærende relationer.\nKærlighed, romantik, intimitet og sex i parforholdet. Du tiltrækker parforhold hvor det intime både er følelsesmæssigt og fysisk, hvor kærlighed og intimitet går hånd i hånd.\nGlæde og lyst til livet.",
+				"Når 46/1 er i ubalance kan du opleve problemer med forretninger og penge. Mangel på flow i økonomi, vekslen mellem høj og lav konjunktur.\nDu kan have vanskeligheder med partnerskaber, arbejdsmæssigt og/eller privat. Du mangler støtte hos dit netværk og venner, eller oplever en mangel på fællesskaber i dit liv. Du kan opleve en mangel på nærende relationer og føle dig ensom.\nDu kan opleve seksuel ubalance (fx manglende lyst, stor lyst, sex uden følelser).\nNår 46/1 er i ubalance kan det indikere et mere eller mindre lukket hjertechakra. Du kan opleve problemer med at åbne op følelsesmæssigt.\nMangel på glæde og lyst.\n(Obs. når 46/1 er i ubalance kan der være balance inden for nogle af disse elementer og balance inden for andre.)\n37/1 og 46/1 udtrykker den samme grundlæggende energi."
+			  ],
+			  "47": [
+				"Usikkerhedstallet",
+				"47/2 er altid ubalanceret.",
+				"Svaghed og lav vibration. Usikkerhed og tillidsbrud.\nMed 47/2 i dit liv tiltrækker du upålidelige personer, som bringer sorg og skuffelser i livet. Energien tiltrækker vanskeligheder og bedrag.\nDu er meget blid og gør alt af et rent hjerte, men oplever gang på gang at blive udnyttet af andre på trods af alle dine gode og rene hensigter.\nDu kan ofte komme i tvivl om du nu er god nok som du er. Det store problem med denne her navnevibration er, at fordi du kan opleve denne usikkerhed, så kan du være tilbøjelig til at tro på andres luftkasteller.\nDer er substantiel sorg og angst forbundet med 47/2, ofte forårsaget af det modsatte køn, kærlighedssorger.\nDet er et tal med advarsler omkring alle områder i det personlige liv og karrieren.\n(Det eneste forsonende der er at sige om 47/2 er, at det er en så svag energi, at den i mange numeroskoper tromles af de andre energier, så den kommer mindre til udtryk.)\n29/2, 38/2 og 47/2 udtrykker den samme grundlæggende energi."
+			  ],
+			  "48": [
+				"Retrospektion",
+				"48/3 er altid ubalanceret.",
+				"Tallet for retrospektion. Tilbageblik, tanker, fortrydelse.\nMed 48/3 i dit liv kan du opleve at være meget optaget af fortiden og du kan bruge meget tid og mange tanker på at komme med dybsindige konklusioner om skete ting. Energien trækkes hele tiden bagud med 48/3, hvilket hindrer dig i at være til stede i nuet. Du kan sidde fast i tanker om hvad der kunne have været.\nMed 48/3 er du sikkert god til at analysere, reflektere og regne ting ud rationelt. Med energien indeholder også modstand på nye input, fordi vibrationen handler meget om fortiden og ikke så meget om nyt og fremtiden, udover bekymring omkring hvad der kan komme til at ske. På den måde er det en lidt tung energi, fordi den holder dit fokus fast på det gamle fremfor at skabe. 48/3 skaber stagnation og stilstand.\nDu kan med denne energi have tendens til at være lidt en enspænder og ønske ro med dine tanker frem for sociale relationer.\nSpirituel lukkethed. Du kan opleve at få lukket ned for det spirituelle, fordi 48/3 gerne vil stå stille og ikke gider at åbne op for nye forståelser af verden. Logikken og analysen fylder meget og ofte langt mere end det intuitive.\n30/3, 39/3 og 48/3 udtrykker den samme grundlæggende energi."
+			  ],
+			  "49": [
+				"Eneboeren",
+				"49/4 er altid ubalanceret.",
+				"Tallet for eneboeren, geniet og den helt brilliante hjerne der kan have så svært ved at være i verden.\nDu har formentlig et helt særligt talent (om end måske et uopdaget og ganske undervurderet talent) med 49/4 i dit liv – men dette kan have skabt en grundlæggende følelse af ikke at passe ind.\nDu kender til at føle dig anderledes. Du kan føle dig misforstået af andre mennesker, eller måske ligefrem føle dig som det sorte får i familien eller andre relationer.\nSelv i livlige og deltagende sociale sammenhænge kan du sidde med en indre følelse af isolation, af fremmedhed.\nMed tiden kan du begynde at trække dig fra sociale sammenhænge (fordi du ikke får noget ud af det alligevel, men blot bliver bekræftet i at du ikke passer ind), isolerer dig fra andre, hvilket fører til ensomhed. Det bliver en selvopfyldende profeti om at man jo ikke er god nok, og man er anderledes, og de andre kan aldrig forstå mig, hvilket fører til mere indesluttethed.\nPå grund af dette trækker de fleste der hedder 49/4 sig på et eller andet tidspunkt fra samfundet og lever alene, gerne uforstyrret i fred og ro med megen natur, eller det kan være en familie der lukker sig om sig selv.\nDu kan have stærke holdninger, måske endda mange politiske overbevisninger og/eller holdninger samt ønsker og forslag til forandringer, men kan have svært ved at implementere forandring i dit eget liv.\nMaterielt og økonomisk er 49/4 ikke heldigt, den er lukket om sig selv.\n31/4, 40/4 og 49/4 udtrykker den samme grundlæggende energi."
+			  ],
+			  "50": [
+				"Kommunikation",
+				"Når 50/5 er i balance er det tallet for magnetisk fængslende kommunikation. Du er dygtig til at formidle og kan påvirke og nærmest fortrylle dem du taler til.\nDe store temaer er kommunikation, salg, penge og handel samt alle former for formidling som undervisning, reklame, radio og tv samt skrivning og diverse udgivelser. Du er god til at videreformidle budskaber på en letforståelig måde.\n50/5 er en magisk pengevibration og kan være et rigtig godt business tal, der støtter op omkring handel og salg både i ind- og udland.\nDu er god til at tjene penge og oplever flow i økonomi og held med investeringer. Du er fleksibel og god til at samarbejde, hvilket giver gode resultater.\nSammenslutninger af mennesker, grupper, fællesskaber. Du er god til at samle mennesker og indgå i givende fællesskaber af forskellig art.\nDu oplever held med dine relationer helt generelt, herunder også i kærligheden.",
+				"Når 50/5 er i ubalance oplever du udfordringer med kommunikation. Du kan opleve at det er svært at trænge igennem med dine budskaber hvor du ønsker.\nDu kan opleve problemer med penge, at det er svært at tjene nok til et overskud eller du kan opleve meget store udsving i din økonomi.\nNår 50/5 er i ubalance kan der være knas i relationerne. Du kan komme til at tiltrække grupper der ikke er harmoniske, hvor fællesskabsfølelsen mangler og fleksibiliteten er på nul hvilket hæmmer enhver udvikling.\nUheld i kærlighed.\n(Obs. når 50/5 er i ubalance kan der være balance inden for nogle af disse elementer og balance inden for andre.)\n32/5, 41/5 og 50/5 udtrykker den samme grundlæggende energi."
+			  ],
+			  "51": [
+				"Krigeren",
+				"51/6 er altid ubalanceret.",
+				"Krigerens tal. 51/6 er en meget stærk energi, der kommer med en advarsel.\nDet siges at man med 51/6 har behov for magt, let får fjender, da den handler om krigeriske tendenser.\nI de gamle numerologiske skrifter advaredes der om farlige fjender og snigmord pga. en ”os og dem” mentalitet.\nDet er en vibration, der vibrerer med avancement.\nMed 51/6 kan du lynhurtigt avancere og rykke opad på rangstigen arbejdsmæssigt. Du kan som følge heraf opleve at du igen og igen støder på megen voldsom modstand og jalousi på din vej.\nDet siges at ledere inden for sager, som ikke er relateret til krig kan finde 51/6 gunstig og beskyttende.\nMen den grumme advarsel har gennem tiden og på grund af de eksempler der foreligger, landet denne navneenergi i kategori 3, det vil sige at den anskues som værende altid er i ubalance, for en sikkerheds skyld, better safe than glorious!"
+			  ],
+			  "52": [
+				"Ustyrlige omvæltninger",
+				"52/7 er altid ubalanceret.",
+				"52/7 er en energi, der skaber omvæltninger i livet. Som lynet fra en klar himmel, der slår ned og ødelægger.\nDu kender til at blive kastet ud i pludselige og uventede situationer. Uro, kaos og ødelæggelse er temaerne med denne energi.\nDet er en ustyrlig kraft, der laver forstyrrelser og forhindringer.\nDu kan opleve gentagne skuffelser og fiaskoer med 52/7 i dit liv.\n43/7 og 52/7 udtrykker den samme grundlæggende energi."
+			  ]
+			}
+			
+			
+			let nameValue, dayValue;
+		
+		
+			$(function() {
+				$(".hide").hide();
+				$("#numeroskop").hide();
+				$("#errormsg").hide();
+				
+				$("#bday-inp input").change(onDateChange);
+				$("#bday-inp input").trigger("change");
+				
+				$("#name-inp input").keydown(onNameChange);
+				$("#name-inp input").keyup(onNameChange);
+				$("#name-inp input").trigger("keydown");
+			});
+			
+			function onDateChange() {
+				let value = $(this).val();
+				if (value == "") {
+					$("#sign-res .result").text("");
+					$("#year-res .result").text("");
+					$("#date-res .result").text("");
+					$("#date-expl").hide();
+					dayValue = false;
+				} else {
+					let stjernetegn = getStjernetegn($(this)[0].valueAsDate);
+					$("#sign-res .result").text(stjernetegn);
+				
+					let yearSum = getSum(value.substring(0, 4).split("").map(e => parseInt(e)));
+					$("#year-res .result").text(yearSum);
+					
+					dayValue = get9Value(parseInt(value.substring(8, 10)));
+					$("#date-res .result").text(dayValue);
+					
+					$("#date-expl").show();
+					let month = måneder[dayValue];
+					$("#date-expl .planet").text(month[0]);
+					$("#date-expl .prop").text(month[1]);
+				}
+				
+				$("#name-inp input").trigger("keydown");
+			}
+			
+			function onNameChange() {
+				let value = $(this).val().toLowerCase();
+				nameValue = getSum(value.split("").map(e => {
+					return letterValues.hasOwnProperty(e) ? letterValues[e] : 0;
+				}));
+				if (nameValue == 0) {
+					$("#name-res .result").text("");
+					$("#numeroskop").hide();
+					$("#errormsg").hide();
+					return;
+				}
+				
+				while (nameValue > 52) {
+					nameValue = getSum(nameValue.toString().split("").map(e => parseInt(e)));
+				}
+				
+				let error = false;
+				if (nameValue < 10) {
+					if (dayValue) {
+						nameValue += dayValue;
+						if (nameValue < 10) nameValue += 9;
+					} else error = true;
+				} 
+				
+				let nineValue = get9Value(nameValue);
+				$("#name-res .result").text(nameValue + "/" + nineValue);
+				
+				if (error) {
+					$("#numeroskop").hide();
+					$("#errormsg").show();
+				} else {
+					$("#numeroskop").show();
+					$("#errormsg").hide();
+					
+					let numero = numeroskoper[nameValue];
+					$("#num-res .result").text(numero[0]);
+					$("#name-expl-1").text(numero[1]);
+					$("#name-expl-2").text(numero[2]);
+				}
+			}
+			
+			function getSum(numbers) {
+				return numbers.reduce((p, c) => p + c, 0);
+			}
+			
+			function get9Value(num) {
+				return (num - 1) % 9 + 1;
+			}
+			
+			function getStjernetegn(date) {
+				date.setFullYear(1900);
+				console.log(date, stjernetegn[0][0]);
+				for (let sign of stjernetegn) {
+					if (date < sign[0]) {
+						return sign[1];
+					}
+				}
+				return stjernetegn[0][1];
+			}
+		</script>
+	</head>
+	
+	<body>
+		<h2>Beregn dit numeroskop</h2>
+		<div id="bday-inp" class="inl">
+			<label for="bday-inp">Din fødselsdato:</label>
+			<input id="bday-inp" type="date"></input>
+		</div>
+		<div id="name-inp" class="inl">
+			<label for="name-inp">Dit fornavn:</label>
+			<input id="name-inp" type="text"></input>
+		</div>
+		<br/>
+		
+		<h3>Resultat:</h3>
+		
+		<div id="sign-res" class="inl">
+			<p>Dit stjernetegn: </p>
+			<p class="result"></p>
+		</div>
+		<div id="year-res" class="inl">
+			<p>Din årsenergi: </p>
+			<p class="result"></p>
+			<p class="hide">(Dette kan ikke bruges til noget.)</p>
+		</div>
+		<div id="date-res" class="inl">
+			<p>Din grundenergi: </p>
+			<p class="result"></p>
+		</div>
+		<div id="date-expl" class="inl-nospace">
+			<p>Din grundenergi tilhører</p>
+			<p class="result planet"></p><p>, som er forbundet med</p>
+			<p class="result prop"></p><p>.</p>
+		</div>
+		
+		</br>
+		<div id="name-res" class="inl">
+			<p>Din navneværdi: </p>
+			<p class="result"></p>
+		</div>
+		
+		<p id="errormsg">Din navneværdi er encifret. Du skal angive din fødselsdato</p>
+		<div id="numeroskop">
+			<div id="num-res" class="inl-nospace">
+				<p>Du er </p> <p class="result"></p><p>, som beskrives forneden:</p>
+			</div>
+			</br>
+			<div id="balance">
+				<p><b>Balance</b></p>
+				<p id="name-expl-1" class="expl"></p>
+			</div>
+			<p><b>Ubalance</b></p>
+			<p id="name-expl-2" class="expl"></p>
+		</div>
+	</body>
+</html>

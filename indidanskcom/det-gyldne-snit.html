@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Det Gyldne Snit</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<style>
+			body {
+				margin: 30px;
+			}
+			
+			main, #p5_loading {
+				display: none;
+			}
+			
+			#content {
+				max-width: 40rem;
+				line-height: 1.5rem;
+				margin-bottom: 4rem;
+			}
+			
+			#content h1 {
+				margin-bottom: 2rem;
+			}
+			
+			#content p {
+				margin-top: 0;
+				margin-bottom: 0.5rem;
+			}
+			
+			br {
+				display: block;
+				margin-bottom: 1rem;
+			}
+			
+			#upload {
+				height: 8rem;
+				max-width: 35rem;
+				margin-bottom: 1rem;
+				border: 3px dashed #aaaaaa;
+				box-sizing: border-box;
+				position: relative;
+			}
+
+			#upload.success {
+				border: 2px solid #888888;
+			}
+
+			#upload input {
+				opacity: 0;
+				width: 100%;
+				height: 100%;
+			}
+
+			#upload div {
+				position: absolute;
+				top: 0%;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #333333;
+			}
+
+			#upload img {
+				height: 3.5rem;
+			}
+			
+			#buttons {
+				max-width: 35rem;
+				position: relative;
+			}
+			
+			#buttons button {
+				padding: 0.2rem 0.4rem;
+				font-size: 1rem;
+				display: inline-block;
+			}
+			
+			#buttons button:disabled {
+				cursor: not-allowed;
+			}
+			
+			#buttons .save {
+				position: absolute;
+				right: 0;
+			}
+			
+			#upload input:hover, #buttons button:enabled:hover {
+				cursor: pointer;
+			}
+			
+			#display canvas {
+				margin-top: 3em;
+				box-shadow: 2px 2px 3px;
+			}
+		</style>
+		
+		<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+	</head>
+	
+	<body>
+		<div id="content">
+			<h1>Find det gyldne snit</h1>
+			
+			<p>Det gyldne snit er en kompositionsmetode, som ofte er brugt i malerier og fotografier.</p>
+			<p>Det gyldne snit består af fire vinkelrette linjer, som opdeler billedet i 9 kvadrater. 
+			Langs disse linjer og på deres skæringspunkter finder man som regel de elementer, der er specielle og som skal fremhæves.</p>
+			<br>
+			<p>For at finde det gyldne snit i dit billede, skal du trække billedfilen ind i feltet forneden eller vælge den ved at klikke i feltet. 
+			Derefter trykker du på "Go!", og når dit billede er færdigt, kan du trykke på "Gem billede" for at downloade det nye billede i fuld kvalitet.</p>
+			<p>Du kan nårsomhelst vælge et andet billede og trykke på "Go!" knappen igen.</p>
+			<br>
+			<p>Siden virker nu også på telefon.</p>
+		</div>
+		
+		<form id="upload">
+			<div class="empty">
+				<img src="uploadfile.png"/>
+				<span>Træk din fil hér eller <b>vælg en</b></span>
+			</div>
+			<div class="fail" style="display: none;">
+				<img src="notallowed.png"/>
+				<span><span class="filename">dumfil.exe</span> er ikke et billede eller understøttes ikke<br/>
+				<b>Vælg en anden fil</b>
+				</span>
+			</div>
+			<div class="succeed" style="display: none;">
+				<img src="checkmark.png"/>
+				<span><span class="filename">coolbillede.png</span><br/><b>Vælg en anden fil</b></span>
+			</div>
+			<div class="loading" style="display: none;">
+				<img src="loading.png"/>
+				<span>Vent et øjeblik...</span>
+			</div>
+
+			<input type="file"/ accept="image/*">
+		</form>
+		<div id="buttons">
+			<button class="go">Go!</button>
+			<button class="save">Gem billede</button>
+		</div>
+
+		
+		<div id="display"></div>
+		
+		<script>
+			let image;
+			let fileName;
+			let strokeWeight;
+		
+			const T = 40;
+			const T1 = 20;
+			const T2 = 40;
+			const T3 = 70;
+			const T4 = 90;
+
+			function fLine(p, x1, y1, x2, y2) {
+				p.line(floor(x1), floor(y1), floor(x2), floor(y2));
+			}
+		
+			function setup() {}
+			
+			function init(p) {
+				const img = image;
+				const W = image.width;
+				const H = image.height;
+				
+				const extIndex = fileName.indexOf(".");
+				const saveFileName = `${fileName.slice(0, extIndex)}-det-gyldne-snit${fileName.slice(extIndex)}`;
+				
+				p.finished = false;
+
+				p.setup = function() {
+					p.createCanvas(W, H);
+					p.pixelDensity(1);
+
+					p.stroke(255, 0, 0);
+					p.strokeWeight(strokeWeight);
+				}
+
+				p.draw = function() {
+					p.clear();
+					p.image(img, 0, 0, W, H);
+
+					fLine(p, W*3/8, -5, W*3/8, H*((p.frameCount-T-T1)/60)+5);
+					fLine(p, W*5/8, -5, W*5/8, H*((p.frameCount-T-T2)/60)+5);
+					fLine(p, -5, H*3/8, W*((p.frameCount-T-T3)/60)+5, H*3/8);
+					fLine(p, -5, H*5/8, W*((p.frameCount-T-T4)/60)+5, H*5/8);
+					
+					if ((p.frameCount-T-T4) == 60) {
+						$("#buttons .save").prop("disabled", false);
+					}
+				}
+				
+				p.saveImage = function() {
+					p.clear();
+					p.image(img, 0, 0, W, H);
+					
+					p.strokeWeight(floor(strokeWeight/2)*2);
+					fLine(p, W*3/8, -5, W*3/8, H+5);
+					fLine(p, W*5/8, -5, W*5/8, H+5);
+					fLine(p, -5, H*3/8, W+5, H*3/8);
+					fLine(p, -5, H*5/8, W+5, H*5/8);
+					p.saveCanvas(saveFileName);
+					
+					p.strokeWeight(strokeWeight);
+					p.draw();
+				}
+			}
+			
+			
+			let instance;
+			
+			$(function() {
+				$("#buttons .go").prop("disabled", true);
+				$("#buttons .save").prop("disabled", true);
+			});
+			
+			$("#upload input").change(function() {
+				const file = this.files[0];
+				if (!file) return;
+				
+				fileName = file.name;
+				
+				const reader = new FileReader();
+				reader.onerror = function() {
+					$("#upload > div").hide();
+					$("#upload .fail").show()
+						.find(".filename").text(fileName);
+
+					$("#upload").removeClass("success");
+					$("#buttons .go").prop("disabled", true);
+
+					image = "";
+				};
+
+				reader.onload = function() {
+					if (reader.result.indexOf("image") == 5) {
+						loadImage(reader.result, function(img) { // Success
+							$("#upload > div").hide();
+							$("#upload .succeed").show()
+								.find(".filename").text(fileName);
+							$("#upload").addClass("success");
+							$("#buttons .go").prop("disabled", false);
+							
+							if (instance) instance.remove();
+							image = img;
+						}, function() { // Fail
+							reader.onerror();
+						});
+					} else {
+					  reader.onerror();
+					}
+				};
+
+				$("#upload > div").hide();
+				$("#upload .loading").show();
+				reader.readAsDataURL(file);
+			});
+			
+			$("#buttons .go").click(function() {
+				const maxWidth = 1000; //$("#content").width();
+				const maxHeight = 400; //$("body").height() * 0.9;
+				let ratio = maxWidth / image.width;
+				if (image.height * ratio > maxHeight) {
+					ratio = maxHeight / image.height;
+				}
+
+				let width = ceil(image.width * ratio);
+				let height = ceil(image.height * ratio);
+				strokeWeight = max(floor(2 / ratio), 2);
+
+				$("#buttons .save").prop("disabled", true);
+				
+				const temp = new p5(init, $("#display")[0]);
+				if (instance) instance.remove();
+				instance = temp;
+				$("#display canvas").width(width).height(height)[0]
+					.scrollIntoView({behavior: "smooth", block: "center"});
+			});
+			
+			$("#buttons .save").click(function() {
+				instance.saveImage();
+			});
+		</script>
+	</body>
+</html>

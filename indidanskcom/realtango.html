@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Real Tango</title>
+		
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+			}
+		
+			body {
+				margin: 0;
+				background-image: linear-gradient(to bottom right, #bbb, #888);
+				overflow: hidden;
+			}
+			
+			.center {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.kanji-reading {
+				display: inline-block;
+				font-family: "メイリオ";
+			}
+			
+			.kanji-reading .furigana {
+				display: block;
+				font-size: 45%;
+				line-height: 1em;
+				margin-bottom: 0.2em;
+				text-shadow: none;
+			}
+			
+			.kanji-reading .furigana span {
+				display: inline-block;
+				width: 2.533em;
+			}
+			
+			.kanji-reading .kanji {
+				display: block;
+				font-size: 120%;
+				line-height: 1em;
+			}
+			
+			#container {
+				width: 100%;
+				height: 100%;
+				
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				
+				gap: 4vh;
+			}
+			
+			#title {
+				margin: 0;
+				
+				font-family: Montserrat;
+				font-size: 2.75rem;
+				font-weight: 500;
+				text-align: center;
+				text-shadow: 3px 3px 2px #555;
+				color: #111111;
+			}
+			
+			#main-box {
+				position: relative;
+				min-height: 650px;
+				aspect-ratio: 1;
+				
+				background-color: #fff;
+				border-radius: 20px;
+				box-shadow: 0 0 10px 3px #333333;
+				overflow: hidden;
+			}
+			
+			#tabs {
+				width: 100%;
+				height: 10%;
+				display: flex;
+			}
+			
+			#tabs button {
+				flex: 1 0 auto;
+				height: 100%;
+				
+				font-family: Verdana;
+				font-size: 1.25rem;
+				font-weight: 500;
+				
+				background-color: #eee;
+				border: 2px solid #bbb;
+				border-bottom-width: 4px;
+				border-top: none;
+			}
+			
+			#tabs button.selected {
+				border-bottom: none;
+				background-color: #fff;
+			}
+			
+			#tabs button:first-child {
+				border-left: none;
+			}
+			
+			#tabs button:last-child {
+				border-right: none;
+			}
+			
+			#tabs button:not(.selected):hover {
+				cursor: pointer;
+				background-color: #ddd;
+			}
+			
+			#content {
+				padding-left: 5px;
+				padding-top: 5px;
+			}
+			
+			#download {
+				position: absolute;
+				bottom: 10px;
+				right: 20px;
+				width: 25%;
+			}
+			
+			#download img {
+				width: 100%;
+				aspect-ratio: 3/1;
+			}
+		</style>
+		
+		<script
+			src="https://code.jquery.com/jquery-3.6.0.min.js"
+			integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+			crossorigin="anonymous">
+		</script>
+		<script>
+			$(function() {
+				$("#tabs button[data-tab='intro']").addClass("selected");
+				$("#content .tab").hide();
+				$("#content .tab.intro").show();
+				
+				$("#tabs button").click(function() {
+					if (!$(this).hasClass("selected")) {
+						$("#tabs button").removeClass("selected");
+						$(this).addClass("selected");
+						
+						let tabName = $(this).attr("data-tab");
+						$("#content .tab").hide();
+						$("#content").find(`.tab.${tabName}`).show();
+					}
+				});
+				
+				$("#download").click(function(e) {
+					e.preventDefault();
+					window.location.href = "https://www.youtube.com/watch?v=9lNZ_Rnr7Jc";
+				});
+			});
+		</script>
+	</head>
+	
+	<body>
+		<div id="container">
+			<h1 id="title">Real 
+				<div class="kanji-reading">
+					<div class="furigana"><span>たん</span><span>ご</span></div>
+					<div class="kanji">単語</div>
+				</div>
+			</h1>
+			<div id="main-box">
+				<div id="tabs">
+					<button data-tab="intro">Intro</button>
+					<button data-tab="dict">Dictionary</button>
+					<button data-tab="settings">Settings</button>
+					<button data-tab="study">Study</button>
+				</div>
+				<div id="content">
+					<div class="tab intro">
+						<p>tab 1</p>
+						<a id="download" href="https://itunes.apple.com/app/apple-store/id458102649?pt=17385800&ct=indidansk.com%2F&mt=8">
+							<img src="../files/download.svg">
+						</a>
+					</div>
+					<div class="tab dict">
+						<p>tab 2</p>
+					</div>
+					<div class="tab settings">
+						<p>tab 3</p>
+					</div>
+					<div class="tab study">
+						<p>tab 4</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
