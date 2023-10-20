@@ -1,0 +1,49 @@
+{
+	"editor.detectIndentation": true,
+	"saveEditorLayout.list": [
+		{
+			"name": "HTML 1",
+			"documents": [
+				{
+					"fsPath": "c:\\Users\\Marcus\\Mit drev\\corkboard\\index.html",
+					"column": 1,
+					"pinned": false
+				},
+				{
+					"fsPath": "c:\\Users\\Marcus\\Mit drev\\corkboard\\corkboard.html",
+					"column": 1,
+					"pinned": false
+				},
+				{
+					"fsPath": "c:\\Users\\Marcus\\Mit drev\\corkboard\\board_controls.js",
+					"column": 2,
+					"pinned": false
+				},
+				{
+					"fsPath": "c:\\Users\\Marcus\\Mit drev\\corkboard\\board_elements.js",
+					"column": 2,
+					"pinned": false
+				}
+			],
+			"layout": {
+				"orientation": 0,
+				"groups": [
+					{
+						"size": 882,
+						"groups": [
+							{
+								"size": 378
+							},
+							{
+								"size": 413
+							}
+						]
+					},
+					{
+						"size": 785
+					}
+				]
+			}
+		}
+	]
+}
