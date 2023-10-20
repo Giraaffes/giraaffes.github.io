@@ -364,7 +364,6 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 
 
 $("body").on("mousemove", (e) => {
-	console.log("a");
 	if (clickedDraggable) {
 		if (draggingDraggable) {
 			let left = `calc(${boardX(e)}px - ${draggableDragXOffset})`;
