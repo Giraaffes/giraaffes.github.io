@@ -163,7 +163,7 @@ async function createBoard(boardData) {
 	let boardCenterY = (maxY + minY) / 2 * 16;
 	board.on("click", () => {
 		window.location.href = 
-			`/corkboard.html?board=${boardData.id}&x=${boardCenterX}&y=${boardCenterY}`;
+			`./edit.html?board=${boardData.id}&x=${boardCenterX}&y=${boardCenterY}`;
 	});
 }
 
