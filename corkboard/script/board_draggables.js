@@ -166,7 +166,7 @@ function createDraggable(id, type, element) {
 
 	draggable.element.on("mouseleave", (e_) => {
 		if (draggingDraggable && e_.relatedTarget == $("html")[0]) {
-			$(document).trigger("mouseup");
+			$("body").trigger("mouseup");
 		} else if (pinToggled) {
 			if (draggable.pinned) draggable.pinElement.css("opacity", 1);
 			$("#preview-pin").hide();
@@ -195,7 +195,7 @@ function createSticky(id, atMouse, mouseposEvent, beginDragging) {
 			draggingDraggable = true;
 			draggableDragXOffset = halfWidth;
 			draggableDragYOffset = "1rem";
-			triggerWithCoords(document, "mousemove", mouseposEvent);
+			triggerWithCoords("body", "mousemove", mouseposEvent);
 		} else {
 			stickyElement.css({
 				"left": `calc(${boardX(mouseposEvent)}px - ${halfWidth})`,
@@ -327,7 +327,7 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 
 		draggableDragXOffset = `calc(${draggableDragXOffset} / ${prevSize} * ${draggable.size})`;
 		draggableDragYOffset = `calc(${draggableDragYOffset} / ${prevSize} * ${draggable.size})`;
-		triggerWithCoords(document, "mousemove", e_);
+		triggerWithCoords("body", "mousemove", e_);
 	});
 
 	draggable.image = customUrl || "img/placeholder_image.png";
@@ -343,7 +343,7 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 					draggingDraggable = true;
 					draggableDragXOffset = halfWidth;
 					draggableDragYOffset = "1rem";
-					triggerWithCoords(document, "mousemove", mouseposEvent);
+					triggerWithCoords("body", "mousemove", mouseposEvent);
 				} else {
 					imageElement.css({
 						"left": `calc(${boardX(mouseposEvent)}px - ${halfWidth})`,
@@ -364,6 +364,7 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 
 
 $("body").on("mousemove", (e) => {
+	console.log("a");
 	if (clickedDraggable) {
 		if (draggingDraggable) {
 			let left = `calc(${boardX(e)}px - ${draggableDragXOffset})`;

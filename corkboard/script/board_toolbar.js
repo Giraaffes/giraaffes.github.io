@@ -15,7 +15,7 @@ function anyToolPressed(e) {
 	if (t != "strings-btn" && stringsToggled) $("#strings-btn").trigger("click");
 	if (t != "trash-btn" && trashcanToggled) $("#trash-btn").trigger("click");
 
-	$(document).trigger("mouseup");
+	$("body").trigger("mouseup");
 }
 
 $("#sticky-btn, #img-btn").on("mousedown", anyToolPressed);

@@ -10,16 +10,16 @@ let draggingBoard = false;
 let boardZoom = 1;
 
 
-$("html").scrollLeft(boardWidth / 2 - $(window).width() / 2);
-$("html").scrollTop(boardHeight / 2 - $(window).height() / 2);
+$(document).scrollLeft(boardWidth / 2 - $(window).width() / 2);
+$(document).scrollTop(boardHeight / 2 - $(window).height() / 2);
 
 
 board.on("mousedown", (e) => {
 	boardClicked = true;
 	boardClickedX = e.clientX;
 	boardClickedY = e.clientY;
-	prevBoardX = $("html").scrollLeft();
-	prevBoardY = $("html").scrollTop();
+	prevBoardX = $(document).scrollLeft();
+	prevBoardY = $(document).scrollTop();
 
 	$("#toolbar").css("pointer-events", "none");
 });
@@ -38,8 +38,8 @@ board.on("mousemove", (e) => {
 		let yDragged = e.clientY - boardClickedY;
 
 		if (draggingBoard) {
-			$("html").scrollLeft(prevBoardX - xDragged);
-			$("html").scrollTop(prevBoardY - yDragged);
+			$(document).scrollLeft(prevBoardX - xDragged);
+			$(document).scrollTop(prevBoardY - yDragged);
 		} else {
 			let distDraggedSq = Math.pow(xDragged, 2) + Math.pow(yDragged, 2);
 			if (distDraggedSq >= dragThresholdSq) {
@@ -70,8 +70,8 @@ $("#board, #top-board").on("wheel", (e) => {
 	} else {
 		let scrollX = e.pageX / prevBoardZoom * boardZoom - e.pageX;
 		let scrollY = e.pageY / prevBoardZoom * boardZoom - e.pageY;
-		$("html").scrollLeft($("html").scrollLeft() + scrollX);
-		$("html").scrollTop($("html").scrollTop() + scrollY);
+		$(document).scrollLeft($(document).scrollLeft() + scrollX);
+		$(document).scrollTop($(document).scrollTop() + scrollY);
 
 		$("body").css("background-size", `calc(25rem * ${boardZoom})`);
 	}
@@ -80,7 +80,7 @@ $("#board, #top-board").on("wheel", (e) => {
 
 	e.pageX = e.pageX / prevBoardZoom * boardZoom;
 	e.pageY = e.pageY / prevBoardZoom * boardZoom;
-	triggerWithCoords(document, "mousemove", e);
+	triggerWithCoords("body", "mousemove", e);
 });
 
 board.on("mouseleave", (e) => {

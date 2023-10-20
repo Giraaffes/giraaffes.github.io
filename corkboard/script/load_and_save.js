@@ -9,7 +9,7 @@ async function setup() {
 	let params = new URLSearchParams(window.location.search);
 	let xStart = params.get("x"); let yStart = params.get("y");
 	if (xStart && yStart) {
-		$("html")
+		$(document)
 			.scrollLeft(xStart - $(window).width() / 2)
 			.scrollTop(yStart - $(window).height() / 2);
 		let newUrl = window.location.href.match(/.+?board=\d+/)[0]
@@ -41,7 +41,7 @@ async function load() {
 	document.title = `Board: ${boardName}`;
 
 	if (!forcedStartPosition) {
-		$("html")
+		$(document)
 		.scrollLeft(data.x - $(window).width() / 2)
 		.scrollTop(data.y - $(window).height() / 2);
 	}
