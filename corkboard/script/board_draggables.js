@@ -307,8 +307,7 @@ function createChangeImgButton(draggable) {
 
 function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 	let imageElement = $("<div></div>")
-		.addClass(["draggable", "image"])
-		.attr("crossorigin", "");
+		.addClass(["draggable", "image"]);
 	if (beginDragging) {
 		imageElement.addClass("dragged").appendTo("#top-board");
 	} else {
@@ -332,7 +331,8 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 	});
 
 	draggable.image = customUrl || "img/placeholder_image.png";
-	let image = $(`<img src=\"${draggable.image}\">`).appendTo(imageElement);
+	let image = $(`<img src=\"${draggable.image}\">`)
+		.attr("crossorigin", "").appendTo(imageElement);
 	return new Promise((res, rej) => {
 		image.on("load", () => {
 			image.off("load");
