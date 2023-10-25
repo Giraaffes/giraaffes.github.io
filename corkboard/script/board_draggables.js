@@ -307,7 +307,8 @@ function createChangeImgButton(draggable) {
 
 function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 	let imageElement = $("<div></div>")
-		.addClass(["draggable", "image"]);
+		.addClass(["draggable", "image"])
+		.attr("crossorigin", "");
 	if (beginDragging) {
 		imageElement.addClass("dragged").appendTo("#top-board");
 	} else {
