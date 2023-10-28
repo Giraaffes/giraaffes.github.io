@@ -279,8 +279,11 @@ function createChangeImgButton(draggable) {
 			});
 		} else if (e_.button == 2) {*/
 
+		console.log("a");
 		let url = prompt("File URL?");
-		let res = await fetch(url);
+		let proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+
+		let res = await fetch(proxyUrl);
 		if (!res.ok) return;
 		let blob = await res.blob();
 		if (!blob.type.startsWith('image/')) return;
@@ -331,12 +334,7 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 	});
 
 	draggable.image = customUrl || "img/placeholder_image.png";
-	let imageUrl = draggable.image;
-	if (imageUrl.startsWith("http")) {
-		imageUrl = "https://corsproxy.io/?" + encodeURIComponent(imageUrl);
-	}
-
-	let image = $(`<img src=\"${imageUrl}\">`).appendTo(imageElement);
+	let image = $(`<img src=\"${draggable.image}\">`).appendTo(imageElement);
 	return new Promise((res, rej) => {
 		image.on("load", () => {
 			image.off("load");
