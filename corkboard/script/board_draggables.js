@@ -331,7 +331,12 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 	});
 
 	draggable.image = customUrl || "img/placeholder_image.png";
-	let image = $(`<img src=\"${draggable.image}\">`).appendTo(imageElement);
+	let imageUrl = draggable.image;
+	if (imageUrl.startsWith("http")) {
+		imageUrl = "https://corsproxy.io/?" + encodeURIComponent(imageUrl);
+	}
+
+	let image = $(`<img src=\"${imageUrl}\">`).appendTo(imageElement);
 	return new Promise((res, rej) => {
 		image.on("load", () => {
 			image.off("load");
