@@ -50,7 +50,7 @@ function createPin(draggable, color) {
 
 	draggable.pinElement.on("mousedown", (e) => {
 		e.stopPropagation();
-		if (stringsToggled) {
+		if (stringsToggled && e.button == 0) {
 			draggingString = true;
 			stringOrigDraggable = draggable;
 			draggable.pinElement.addClass("dragging-from");
@@ -72,7 +72,7 @@ function createPin(draggable, color) {
 	});
 
 	draggable.pinElement.on("click", (e_) => {
-		if (trashcanToggled) {
+		if (trashcanToggled && e_.button == 0) {
 			removeConnections(draggable);
 			updateCanvas(e_);
 			
@@ -106,12 +106,10 @@ function createDraggable(id, type, element) {
 	draggable.element.on("mousedown", (e_) => {
 		e_.stopPropagation();
 		if (pinToggled || stringsToggled || trashcanToggled) {
+			// Prevent sticky focusing or img being dragged
 			e_.preventDefault();
 			return;
-		} else if ( // sticky and image special cases
-			draggable.element.is(":focus") || 
-			draggable.element.has("button.hover").length
-		) {
+		} else if (e_.button != 0 || draggable.element.is(":focus")) {
 			return;
 		}
 
@@ -127,6 +125,8 @@ function createDraggable(id, type, element) {
 	});
 
 	draggable.element.on("click", (e_) => {
+		if (e_.button != 0) return;
+
 		if (
 			pinToggled && (
 				!draggable.pinned || 
@@ -263,8 +263,11 @@ function createChangeImgButton(draggable) {
 		changeBtn.removeClass("hover");
 	});
 
+	changeBtn.on("mousedown", (e_) => {
+		if (changeBtn.hasClass("hover")) e_.stopPropagation();
+	});
 	changeBtn.on("mouseup", async (e_) => {
-		if (!changeBtn.is(".hover")) return;
+		if (!changeBtn.is(".hover") || e_.button != 0) return;
 
 		// fuckkk this doesn't work
 		/*if (e_.button == 0) {
@@ -280,6 +283,7 @@ function createChangeImgButton(draggable) {
 		} else if (e_.button == 2) {*/
 
 		let url = prompt("File URL?");
+		if (!url) return;
 		let cutoffPos = url.search(/(?<=\.(png|gif|webp|jpg|jpeg|svg|avif))[\?\/]/);
 		if (cutoffPos) url = url.slice(0, cutoffPos);
 		let proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
@@ -370,6 +374,8 @@ function createImage(id, atMouse, mouseposEvent, beginDragging, customUrl) {
 $("body").on("mousemove", (e) => {
 	if (clickedDraggable) {
 		if (draggingDraggable) {
+			window.getSelection().removeAllRanges();
+
 			let left = `calc(${boardX(e)}px - ${draggableDragXOffset})`;
 			let top = `calc(${boardY(e)}px - ${draggableDragYOffset})`;
 			clickedDraggable.element.css({left, top});

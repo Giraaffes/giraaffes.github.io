@@ -15,6 +15,8 @@ $(document).scrollTop(boardHeight / 2 - $(window).height() / 2);
 
 
 board.on("mousedown", (e) => {
+	if (e.button != 0) return;
+
 	boardClicked = true;
 	boardClickedX = e.clientX;
 	boardClickedY = e.clientY;
