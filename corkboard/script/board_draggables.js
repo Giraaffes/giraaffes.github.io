@@ -280,6 +280,8 @@ function createChangeImgButton(draggable) {
 		} else if (e_.button == 2) {*/
 
 		let url = prompt("File URL?");
+		let cutoffPos = url.search(/(?<=\.(png|gif|webp|jpg|jpeg|svg|avif))[\?\/]/);
+		if (cutoffPos) url = url.slice(0, cutoffPos);
 		let proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
 
 		let res = await fetch(proxyUrl);
