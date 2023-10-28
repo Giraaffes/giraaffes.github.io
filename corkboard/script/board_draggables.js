@@ -279,7 +279,6 @@ function createChangeImgButton(draggable) {
 			});
 		} else if (e_.button == 2) {*/
 
-		console.log("a");
 		let url = prompt("File URL?");
 		let proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
 
