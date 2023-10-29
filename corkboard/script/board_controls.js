@@ -9,6 +9,8 @@ let draggingBoard = false;
 
 let boardZoom = 1;
 
+let photoMode = false;
+
 
 $(document).scrollLeft(boardWidth / 2 - $(window).width() / 2);
 $(document).scrollTop(boardHeight / 2 - $(window).height() / 2);
@@ -88,6 +90,17 @@ $("#board, #top-board").on("wheel", (e) => {
 board.on("mouseleave", (e) => {
 	if (e.relatedTarget == $("html")[0]) {
 		board.trigger("mouseup");
+	}
+});
+
+$("body").on("keydown", (e) => {
+	if (e.key.toLowerCase() == "p") {
+		photoMode = !photoMode;
+		if (photoMode) {
+			$("#go-back-bar, #toolbar").hide();
+		} else {
+			$("#go-back-bar, #toolbar").show();
+		}
 	}
 });
 
