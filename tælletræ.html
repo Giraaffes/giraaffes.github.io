@@ -3,28 +3,212 @@
 	<head>
 		<title>Tælletræ Generator</title>
 		<link rel="icon" type="image/png" href="./tree.png"/>
+		<link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
 		<style>
+			@counter-style dashed {
+				system: cyclic;
+				symbols: "-";
+				suffix: "  ";
+			}
+			
 			body {
 				background: url("./trees-background.jpg");
 				margin: 0;
+
+				font-family: "Varela Round", sans-serif;
 			}
 
 			#content {
 				position: absolute;
-				left: 20%;
-				right: 20%;
+				left: 15%;
+				right: 15%;
 				height: 100%;
+				padding: 1rem 0;
+				box-sizing: border-box;
 
 				background-color: white;
 				box-shadow: 0 0 10px #00000090;
+			}
+
+			#title {
+				color: #222222;
+				font-size: 2.5rem; 
+				text-align: center;
+				margin-bottom: 2rem;
+			}
+
+			[contenteditable]:focus {
+				padding: 0 0.25em;
+			}
+
+			.template {
+				display: none;
+			}
+
+			.deletable > img {
+				visibility: hidden;
+
+				position: relative;
+				display: inline-block;
+				height: 0.6em;
+				top: -0.05em;
+				left: 0.2em;
+
+				filter: invert() brightness(0.55);
+			}
+
+			.deletable:hover > img {
+				visibility: visible;
+			}
+
+			.deletable > img:hover {
+				cursor: pointer;
+				filter: invert() brightness(0.3);
+			}
+
+			.new-preview {
+				opacity: 0;
+				user-select: none;
+			}
+
+			.new-preview, .new-preview * {
+				color: #aaaaaa !important;
+			}
+
+			.new-preview:hover {
+				opacity: 1;
+				cursor: pointer;
+			}
+
+			#categories {
+				display: flex;
+				flex-flow: row nowrap;
+				justify-content: flex-start;
+			}
+
+			#categories > div {
+				width: 25%;
+				padding: 0 3rem;
+				box-sizing: border-box;
+			}
+
+			#categories > div h2 {
+				margin: 1.5rem 0;
+				color: #222222;
+				font-weight: 200;
+				font-size: 2rem;
+				height: 2rem;
+			}
+
+			#categories > div h2 span {
+				text-decoration: underline;
+			}
+
+			#categories > div ul {
+				list-style: dashed;
+				padding-left: 2rem;
+			}
+
+			#categories > div ul li {
+				font-size: 1.25rem;
+				margin: 0.75rem 0;
+			}
+
+			#reset {
+				color: #888888;
+				margin: 1rem 3rem;
+				font-size: 1.05rem;
+			}
+
+			#reset:hover {
+				text-decoration: underline;
+				cursor: pointer;
+				color: #444444;
 			}
 		</style>
 	</head>
 	
 	<body>
 		<div id="content">
+			<h1 id="title">Lav dit helt eget tælletræ!</h1>
+			<div id="categories">
+				<div class="template">
+					<h2 class="deletable">
+						<span contenteditable class="title-text">Kategori</span>
+						<img class="remove-btn" src="./trash-can.png">
+					</h2>
+					<ul>
+						<li class="new-preview">
+							<span>Ny!</span>
+						</li>
+						<li class="deletable template">
+							<span contenteditable class="element-text">Mulighed 1</span>
+							<img class="remove-btn" src="./trash-can.png">
+						</li>
+					</ul>
+				</div>
+				<div class="new-preview"><h2>Ny kategori!</h2></div>
+			</div>
 
+			<p id="reset">Jeg vil gerne starte forfra...</p>
 		</div>
+
+		<script>
+			let newCategoryBtn = $("#categories > .new-preview");
+
+			function newCategory() {
+				let newCategory = $("#categories > .template").clone()
+					.removeClass("template").insertBefore(newCategoryBtn);
+				
+				let titleText = newCategory.find(".title-text");
+				titleText.on("blur", (e) => {
+					if (titleText[0].textContent.trim().length == 0) {
+						titleText[0].textContent = "Kategori";
+					}
+				}).on("keypress", (e) => {
+					if (e.key == "Enter") {
+						titleText.trigger("blur");
+					}
+				});
+
+				newCategory.find("h2 .remove-btn").on("click", () => {
+					newCategory.remove();
+				});
+
+				let elements = newCategory.find("ul");
+				let newButton = elements.find(".new-preview");
+				newButton.on("click", (_, doNotFocus) => {
+					let childrenCount = elements.children().not(".new-preview").not(".template").length;
+					let newElement = elements.find(".template").clone()
+						.removeClass("template").insertBefore(newButton);
+					newElement.find(".remove-btn").on("click", () => {
+						newElement.remove();
+					});
+
+					let elementText = newElement.find(".element-text");
+					elementText.text(`Mulighed ${childrenCount+1}`);
+					elementText.on("blur", (e) => {
+						if (elementText[0].textContent.trim().length == 0) {
+							elementText[0].textContent = "Mulighed";
+						}
+					}).on("keypress", (e) => {
+						if (e.key == "Enter") {
+							elementText.trigger("blur");
+						}
+					});
+
+					if (!doNotFocus) elementText.trigger("focus");
+				});
+				newButton.trigger("click", [true]);
+				newButton.trigger("click", [true]);
+			}
+
+			newCategory();
+			newCategory();
+			newCategory();
+		</script>
 	</body>
 </html>
