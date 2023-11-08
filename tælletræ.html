@@ -70,19 +70,15 @@
 			}
 
 			.deletable > img {
-				visibility: hidden;
-
+				display: none;
 				position: relative;
-				display: inline-block;
 				height: 0.65em;
-				top: -0.05em;
-				left: 0.2em;
 
 				filter: invert() brightness(0.55);
 			}
 
 			.deletable:hover > img {
-				visibility: visible;
+				display: inline-block;
 			}
 
 			.deletable > img:hover {
@@ -292,11 +288,11 @@
 
 								ctx.beginPath();
 								ctx.moveTo(
-									w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
+									w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 60,
 									(h - 30) * (y + 0.5 / splits) + 30
 								);
 								ctx.lineTo(
-									w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * (step + 1) + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
+									w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * (step + 1) + w * Math.max(0.25 - 0.05 * steps, 0.1) - 60,
 									(h - 30) * (y + i_ / newSplits + 0.5 / newSplits) + 30
 								);
 								ctx.stroke();
@@ -316,7 +312,7 @@
 						}
 						ctx.beginPath();
 						ctx.ellipse(
-							w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
+							w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 60,
 							(h - 30) * (y + 0.5 / splits) + 30,
 							10, 10, 0, 0, Math.PI*2
 						);
@@ -332,14 +328,14 @@
 							}
 							ctx.fillText(
 								$(elements).eq(elIndex).find(".element-text").text(),
-								w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75 + 20,
+								w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 60 + 20,
 								(h - 30) * (y + 0.5 / splits) + 30,
 							);
 						} else if (step > 0) {
 							ctx.textAlign = "center";
 							ctx.fillText(
 								$(elements).eq(elIndex).find(".element-text").text(),
-								w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
+								w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 60,
 								(h - 30) * (y + 0.5 / splits) - 25 + 30,
 							);
 						}
@@ -365,11 +361,11 @@
 							elements.each((i, e3) => {
 								ctx.beginPath();
 								ctx.moveTo(
-									w * (0.4 + 0.1 * categories.length) / categories.length * c + w * (0.3 - 0.05 * categories.length) - 75,
+									w * (0.4 + 0.1 * categories.length) / categories.length * c + w * (0.3 - 0.05 * categories.length) - 60,
 									(h - 30) / splits * (s + 0.5) + 30
 								);
 								ctx.lineTo(
-									w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75,
+									w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60,
 									(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 								);
 								ctx.stroke();
@@ -381,7 +377,7 @@
 					ctx.fillStyle = "#ffffff"
 					ctx.beginPath();
 					ctx.ellipse(
-						w * (0.3 - 0.05 * categories.length) - 75, (h - 30) / 2 + 30,
+						w * (0.3 - 0.05 * categories.length) - 60, (h - 30) / 2 + 30,
 						10, 10, 0, 0, Math.PI*2
 					);
 					ctx.fill();
@@ -395,7 +391,7 @@
 								ctx.fillStyle = combColors[c][i % 6];
 								ctx.beginPath();
 								ctx.ellipse(
-									w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75,
+									w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60,
 									(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30,
 									10, 10, 0, 0, Math.PI*2
 								);
@@ -406,14 +402,14 @@
 									ctx.textAlign = "left";
 									ctx.fillText(
 										$(e3).find(".element-text").text(),
-										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75 + 20,
+										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60 + 20,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 									);
 								} else {
 									ctx.textAlign = "center";
 									ctx.fillText(
 										$(e3).find(".element-text").text(),
-										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75,
+										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) - 25 + 30
 									);
 								}
