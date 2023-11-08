@@ -196,8 +196,8 @@
 		<script>
 			const combColors = [
 				["#FF5347", "#FF9D4F", "#F5F263", "#81D152", "#42ADC7", "#5B4DB7"],
-				["#C7CEEA", "#B5EAD7", "#E2F0CB", "#FFDAC1", "#FFB7B2", "#FF9AA2"],
-				["#E868A2", "#F28C33", "#F5D63D", "#C5D647", "#79C267", "#459BA8"],
+				["#94a3e0", "#8adbbe", "#c4e094", "#f0bb97", "#f08981", "#ed646e"],
+				["#E868A2", "#dff233", "#F5D63D", "#C5D647", "#79C267", "#459BA8"],
 				["#C771A1", "#6399A5", "#BED649", "#E8C43C", "#DB8525", "#D95D5D"]
 			];
 			const permColors = [
@@ -410,7 +410,7 @@
 			}
 
 			let newCategoryBtn = $("#categories > .new-preview");
-			newCategoryBtn.on("click", () => {
+			newCategoryBtn.on("click", (_, name, elementNames) => {
 				if ($("#categories > div").not(".new-preview").not(".template").length == 3) {
 					newCategoryBtn.hide();
 				}
@@ -428,6 +428,7 @@
 						titleText.trigger("blur");
 					}
 				});
+				if (name) titleText.text(name);
 
 				newCategory.find("h2 .remove-btn").on("click", () => {
 					newCategory.remove();
@@ -473,12 +474,17 @@
 
 					updateStuff()
 				});
-				newButton.trigger("click", ["Mulighed 1"]);
-				newButton.trigger("click", ["Mulighed 2"]);
+				if (elementNames) {
+					for (let elementName of elementNames) {
+						newButton.trigger("click", [elementName]);
+					}
+				} else {
+					newButton.trigger("click", ["Mulighed 1"]);
+					newButton.trigger("click", ["Mulighed 2"]);
+				}
 
 				updateStuff();
 			});
-			newCategoryBtn.trigger("click");
 
 			$("#reset").on("click", () => {
 				$("#categories > div").not(".new-preview").not(".template").remove();
@@ -503,6 +509,10 @@
 			}).trigger("input");
 			
 			$("#permutation .num").on("blur", updateStuff).on("input", updateStuff);
+
+			newCategoryBtn.trigger("click", ["Forret", ["Suppe", "Brød"]]);
+			newCategoryBtn.trigger("click", ["Hovedret", ["And", "Okse", "Vegetar", "Fisk"]]);
+			newCategoryBtn.trigger("click", ["Dessert", ["Ost", "Is", "Souffle"]]);
 		</script>
 	</body>
 </html>
