@@ -13,21 +13,29 @@
 				symbols: "-";
 				suffix: "  ";
 			}
+
+			html {
+				overflow-y: scroll
+			}
 			
 			body {
 				background: url("./trees-background.jpg");
+				background-repeat: no-repeat;
+				background-size: cover;
 				margin: 0;
 
 				font-family: "Varela Round", sans-serif;
+
+				display: flex;
+				flex-direction: column;
+				align-items: center;
 			}
 
 			#content {
-				position: absolute;
-				left: 15%;
-				right: 15%;
-				height: 100%;
-				padding: 1rem 3rem;
+				width: 70%;
+				padding: 2rem 3rem;
 				box-sizing: border-box;
+				min-height: 100vh;
 
 				background-color: white;
 				box-shadow: 0 0 10px #00000090;
@@ -155,9 +163,8 @@
 			}
 
 			canvas {
-				margin-top: 2rem;
 				flex-grow: 1;
-				overflow: hidden;
+				margin-top: 2rem;
 			}
 		</style>
 	</head>
@@ -194,6 +201,54 @@
 		</div>
 
 		<script>
+			// #######################################
+			// #            TAG DIG I AGT            #
+			// # FORNEDEN ER POTENTIELT ULOVLIG KODE #
+			// #  (Kode, der er så dårligt skrevet,  #
+			// #     at det burde være ulovligt.)    #
+			// #######################################
+
+			// (Også foroven; HTML-koden er ret ringe)
+			// (Jeg skulle skrive det hele på én dag, okay)
+
+			function combinations() {
+				let comb = 1;
+				let calcStr = "Antal kombinationer:  ";
+				let categories = $("#categories > div:not(.new-preview):not(.template)");
+				categories.each((i, e) => {
+					let elements = $(e).find("ul li:not(.new-preview):not(.template)");
+					if (elements.length == 0) return;
+					if (i > 0) calcStr += " ⋅ ";
+					calcStr += elements.length;
+					comb *= elements.length;
+				});
+				calcStr += " = " + comb;
+				return { calcStr, comb };
+			}
+
+			function permutations() {
+					let category = $("#categories > div:not(.new-preview):not(.template)");
+					let elements = category.find("ul li:not(.new-preview):not(.template)");
+
+					let steps = $("#permutation .num").val();
+					let perm = 1;
+					let calcStr = `Antal permutationer:  ${elements.length}! / (${elements.length} - ${steps})! = (`;
+					for (let s = 0; s < elements.length; s++) {
+						if (s > 0) calcStr += " ⋅ ";
+						calcStr += elements.length - s;
+						if (s < steps) perm *= elements.length - s;
+					}
+					calcStr += ") / ("
+					for (let s = steps; s < elements.length; s++) {
+						if (s > steps) calcStr += " ⋅ ";
+						calcStr += elements.length - s;
+					}
+					if (steps == elements.length) calcStr += "1";
+					calcStr += ") = " + perm;
+					return { calcStr, perm };
+			}
+
+
 			const combColors = [
 				["#FF5347", "#FF9D4F", "#F5F263", "#81D152", "#42ADC7", "#5B4DB7"],
 				["#94a3e0", "#8adbbe", "#c4e094", "#f0bb97", "#f08981", "#ed646e"],
@@ -209,21 +264,23 @@
 			let w, h;
 
 			function updateCanvas() {
-				canvas.attr("width", null);
-				canvas.attr("height", null);
-				w = Math.ceil(canvas.width()).toString();
-				h = Math.ceil(canvas.height()).toString();
+				canvas.width("100%");
+				w = Math.ceil(canvas.width());
 				canvas.attr("width", w);
-				canvas.attr("height", h);
-
-				ctx.clearRect(0, 0, w, h);
-				ctx.lineCap = "round";
-				ctx.lineWidth = 3;
-				ctx.font = "1.2rem \"Varela Round\", sans-serif";
-				ctx.textBaseline = "middle";
+				canvas.width(w);
 
 				let categories = $("#categories > div:not(.new-preview):not(.template)");
 				if (categories.length == 1 && $("#permutation .enabled").is(":checked")) {
+					let { perm } = permutations();
+					canvas.attr("height", null);
+					h = Math.max(30 * (perm + 1), Math.ceil(canvas.height()));
+					canvas.attr("height", h);
+
+					ctx.clearRect(0, 0, w, h);
+					ctx.lineCap = "round";
+					ctx.lineWidth = 3;
+					ctx.font = "1.2rem \"Varela Round\", sans-serif";
+					
 					let elements = categories.find("ul li:not(.new-preview):not(.template)");
 					let steps = $("#permutation .num").val();
 					let drawTree = (step, splits, y, elIndex, removed) => {
@@ -235,11 +292,11 @@
 
 								ctx.beginPath();
 								ctx.moveTo(
-									(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100,
+									w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
 									(h - 30) * (y + 0.5 / splits) + 30
 								);
 								ctx.lineTo(
-									(w - ((9 - steps) * 100)) / steps * (step + 1) + ((9 - steps) * 50) - 100,
+									w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * (step + 1) + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
 									(h - 30) * (y + i_ / newSplits + 0.5 / newSplits) + 30
 								);
 								ctx.stroke();
@@ -259,31 +316,47 @@
 						}
 						ctx.beginPath();
 						ctx.ellipse(
-							(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100,
+							w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
 							(h - 30) * (y + 0.5 / splits) + 30,
 							10, 10, 0, 0, Math.PI*2
 						);
 						ctx.fill();
 						ctx.stroke();
 
-						if (step == steps) {
+						if (step == steps || (elements.length == steps && step == steps - 1)) {
 							ctx.textAlign = "left";
+							if (elements.length == steps && step == steps - 1) {
+								ctx.textBaseline = "bottom";
+							} else {
+								ctx.textBaseline = "middle";
+							}
 							ctx.fillText(
 								$(elements).eq(elIndex).find(".element-text").text(),
-								(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100 + 20,
+								w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75 + 20,
 								(h - 30) * (y + 0.5 / splits) + 30,
 							);
 						} else if (step > 0) {
 							ctx.textAlign = "center";
 							ctx.fillText(
 								$(elements).eq(elIndex).find(".element-text").text(),
-								(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100 + 20,
+								w * Math.min(0.5 + 0.1 * steps, 0.8) / steps * step + w * Math.max(0.25 - 0.05 * steps, 0.1) - 75,
 								(h - 30) * (y + 0.5 / splits) - 25 + 30,
 							);
 						}
 					};
 					drawTree(0, 1, 0, 0, []);
 				} else {
+					let { comb } = combinations();
+					canvas.attr("height", null);
+					h = Math.max(30 * (comb + 1), Math.ceil(canvas.height()));
+					canvas.attr("height", h);
+
+					ctx.clearRect(0, 0, w, h);
+					ctx.lineCap = "round";
+					ctx.lineWidth = 3;
+					ctx.font = "1.2rem \"Varela Round\", sans-serif";
+					ctx.textBaseline = "middle";
+
 					let splits = 1;
 					let categories = $("#categories > div:not(.new-preview):not(.template)");
 					categories.each((c, e1) => {
@@ -292,11 +365,11 @@
 							elements.each((i, e3) => {
 								ctx.beginPath();
 								ctx.moveTo(
-									(w - ((7 - categories.length) * 100)) / categories.length * c + ((7 - categories.length) * 50) - 100,
+									w * (0.4 + 0.1 * categories.length) / categories.length * c + w * (0.3 - 0.05 * categories.length) - 75,
 									(h - 30) / splits * (s + 0.5) + 30
 								);
 								ctx.lineTo(
-									(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100,
+									w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75,
 									(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 								);
 								ctx.stroke();
@@ -308,7 +381,7 @@
 					ctx.fillStyle = "#ffffff"
 					ctx.beginPath();
 					ctx.ellipse(
-						(7 - categories.length) * 50 - 100, (h - 30) / 2 + 30,
+						w * (0.3 - 0.05 * categories.length) - 75, (h - 30) / 2 + 30,
 						10, 10, 0, 0, Math.PI*2
 					);
 					ctx.fill();
@@ -322,7 +395,7 @@
 								ctx.fillStyle = combColors[c][i % 6];
 								ctx.beginPath();
 								ctx.ellipse(
-									(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100,
+									w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75,
 									(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30,
 									10, 10, 0, 0, Math.PI*2
 								);
@@ -333,14 +406,14 @@
 									ctx.textAlign = "left";
 									ctx.fillText(
 										$(e3).find(".element-text").text(),
-										(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100 + 20,
+										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75 + 20,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 									);
 								} else {
 									ctx.textAlign = "center";
 									ctx.fillText(
 										$(e3).find(".element-text").text(),
-										(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100,
+										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 75,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) - 25 + 30
 									);
 								}
@@ -377,32 +450,10 @@
 					let steps = Math.min(Math.max(permNumSelect.val(), 1), elements.length);
 					permNumSelect.val(steps);
 
-					let perm = 1;
-					let calcStr = `Antal permutationer:  ${elements.length}! / (${elements.length} - ${steps})! = (`;
-					for (let s = 0; s < elements.length; s++) {
-						if (s > 0) calcStr += " ⋅ ";
-						calcStr += elements.length - s;
-						if (s < steps) perm *= elements.length - s;
-					}
-					calcStr += ") / ("
-					for (let s = steps; s < elements.length; s++) {
-						if (s > steps) calcStr += " ⋅ ";
-						calcStr += elements.length - s;
-					}
-					if (steps == elements.length) calcStr += "1";
-					calcStr += ") = " + perm;
+					let { calcStr } = permutations();
 					$("#calculation").text(calcStr);
 				} else {
-					let comb = 1;
-					let calcStr = "Antal kombinationer:  ";
-					categories.each((i, e) => {
-						let elements = $(e).find("ul li:not(.new-preview):not(.template)");
-						if (elements.length == 0) return;
-						if (i > 0) calcStr += " ⋅ ";
-						calcStr += elements.length;
-						comb *= elements.length;
-					});
-					calcStr += " = " + comb;
+					let { calcStr } = combinations();
 					$("#calculation").text(calcStr);
 				}
 
