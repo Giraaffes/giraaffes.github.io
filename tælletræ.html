@@ -26,11 +26,14 @@
 				left: 15%;
 				right: 15%;
 				height: 100%;
-				padding: 1rem 0;
+				padding: 1rem 3rem;
 				box-sizing: border-box;
 
 				background-color: white;
 				box-shadow: 0 0 10px #00000090;
+
+				display: flex;
+				flex-flow: column nowrap;
 			}
 
 			#title {
@@ -40,12 +43,22 @@
 				margin-bottom: 2rem;
 			}
 
+			[contenteditable] {
+				padding: 0 0.2em;
+				word-wrap: break-word;
+  			word-break: break-all;
+			}
+
 			[contenteditable]:focus {
-				padding: 0 0.25em;
+				text-decoration: none !important;
 			}
 
 			.template {
 				display: none;
+			}
+
+			.deletable {
+				user-select: none;
 			}
 
 			.deletable > img {
@@ -53,7 +66,7 @@
 
 				position: relative;
 				display: inline-block;
-				height: 0.6em;
+				height: 0.65em;
 				top: -0.05em;
 				left: 0.2em;
 
@@ -87,11 +100,11 @@
 				display: flex;
 				flex-flow: row nowrap;
 				justify-content: flex-start;
+				gap: 3rem;
 			}
 
 			#categories > div {
-				width: 25%;
-				padding: 0 3rem;
+				width: calc(25% - 2.25rem);
 				box-sizing: border-box;
 			}
 
@@ -100,7 +113,6 @@
 				color: #222222;
 				font-weight: 200;
 				font-size: 2rem;
-				height: 2rem;
 			}
 
 			#categories > div h2 span {
@@ -117,16 +129,35 @@
 				margin: 0.75rem 0;
 			}
 
-			#reset {
-				color: #888888;
-				margin: 1rem 3rem;
+			p {
+				margin: 0.3rem 0;
 				font-size: 1.05rem;
+			}
+
+			#calculation {
+				font-size: 1.3rem;
+				text-align: center;
+				margin: 1.5rem 0;
+			}
+
+			#reset {
+				color: #777777;
 			}
 
 			#reset:hover {
 				text-decoration: underline;
 				cursor: pointer;
 				color: #444444;
+			}
+
+			#permutation .enabled:hover {
+				cursor: pointer;
+			}
+
+			canvas {
+				margin-top: 2rem;
+				flex-grow: 1;
+				overflow: hidden;
 			}
 		</style>
 	</head>
@@ -138,28 +169,252 @@
 				<div class="template">
 					<h2 class="deletable">
 						<span contenteditable class="title-text">Kategori</span>
-						<img class="remove-btn" src="./trash-can.png">
+						<img class="remove-btn" draggable="false" src="./trash-can.png">
 					</h2>
 					<ul>
-						<li class="new-preview">
+						<li class="new-preview" style="margin-bottom: 0rem;">
 							<span>Ny!</span>
 						</li>
 						<li class="deletable template">
-							<span contenteditable class="element-text">Mulighed 1</span>
-							<img class="remove-btn" src="./trash-can.png">
+							<span contenteditable class="element-text"></span>
+							<img class="remove-btn" draggable="false" src="./trash-can.png">
 						</li>
 					</ul>
 				</div>
 				<div class="new-preview"><h2>Ny kategori!</h2></div>
 			</div>
 
+			<p id="permutation" style="margin-bottom: 1.5rem;"><input class="enabled" type="checkbox" autocomplete="off" checked> Find permutationer (hvor man vælger <input class="num" style="width: 4rem" type="number" autocomplete="off" value="2"> ud af <span class="amount">de x muligheder</span>)</p>
+			<p id="calculation" style="margin-top: 0.5rem;">-</p>
+
+			<p id="hint">Hint: lad der være én enkel kategori for at opstille et tælletræ med permutationer</p>
 			<p id="reset">Jeg vil gerne starte forfra...</p>
+
+			<canvas></canvas>
 		</div>
 
 		<script>
-			let newCategoryBtn = $("#categories > .new-preview");
+			const combColors = [
+				["#FF5347", "#FF9D4F", "#F5F263", "#81D152", "#42ADC7", "#5B4DB7"],
+				["#C7CEEA", "#B5EAD7", "#E2F0CB", "#FFDAC1", "#FFB7B2", "#FF9AA2"],
+				["#E868A2", "#F28C33", "#F5D63D", "#C5D647", "#79C267", "#459BA8"],
+				["#C771A1", "#6399A5", "#BED649", "#E8C43C", "#DB8525", "#D95D5D"]
+			];
+			const permColors = [
+				"#DB3937", "#F66320", "#FECC2F", "#B2C224", "#33BEB7", "#40A4D8", "#A364D9"
+			];
 
-			function newCategory() {
+			let canvas = $("canvas");
+			let ctx = canvas[0].getContext("2d");
+			let w, h;
+
+			function updateCanvas() {
+				canvas.attr("width", null);
+				canvas.attr("height", null);
+				w = Math.ceil(canvas.width()).toString();
+				h = Math.ceil(canvas.height()).toString();
+				canvas.attr("width", w);
+				canvas.attr("height", h);
+
+				ctx.clearRect(0, 0, w, h);
+				ctx.lineCap = "round";
+				ctx.lineWidth = 3;
+				ctx.font = "1.2rem \"Varela Round\", sans-serif";
+				ctx.textBaseline = "middle";
+
+				let categories = $("#categories > div:not(.new-preview):not(.template)");
+				if (categories.length == 1 && $("#permutation .enabled").is(":checked")) {
+					let elements = categories.find("ul li:not(.new-preview):not(.template)");
+					let steps = $("#permutation .num").val();
+					let drawTree = (step, splits, y, elIndex, removed) => {
+						let newSplits = splits * (elements.length - removed.length);
+						if (step < steps) {
+							let i_ = 0;
+							elements.each((i, e) => {
+								if (removed.includes(i)) return;
+
+								ctx.beginPath();
+								ctx.moveTo(
+									(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100,
+									(h - 30) * (y + 0.5 / splits) + 30
+								);
+								ctx.lineTo(
+									(w - ((9 - steps) * 100)) / steps * (step + 1) + ((9 - steps) * 50) - 100,
+									(h - 30) * (y + i_ / newSplits + 0.5 / newSplits) + 30
+								);
+								ctx.stroke();
+
+								drawTree(
+									step + 1, newSplits,
+									y + i_ / newSplits, i, removed.concat([i])
+								);
+								i_++;
+							});
+						}
+
+						if (step == 0) {
+							ctx.fillStyle = "#ffffff";
+						} else {
+							ctx.fillStyle = permColors[elIndex % 7];
+						}
+						ctx.beginPath();
+						ctx.ellipse(
+							(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100,
+							(h - 30) * (y + 0.5 / splits) + 30,
+							10, 10, 0, 0, Math.PI*2
+						);
+						ctx.fill();
+						ctx.stroke();
+
+						if (step == steps) {
+							ctx.textAlign = "left";
+							ctx.fillText(
+								$(elements).eq(elIndex).find(".element-text").text(),
+								(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100 + 20,
+								(h - 30) * (y + 0.5 / splits) + 30,
+							);
+						} else if (step > 0) {
+							ctx.textAlign = "center";
+							ctx.fillText(
+								$(elements).eq(elIndex).find(".element-text").text(),
+								(w - ((9 - steps) * 100)) / steps * step + ((9 - steps) * 50) - 100 + 20,
+								(h - 30) * (y + 0.5 / splits) - 25 + 30,
+							);
+						}
+					};
+					drawTree(0, 1, 0, 0, []);
+				} else {
+					let splits = 1;
+					let categories = $("#categories > div:not(.new-preview):not(.template)");
+					categories.each((c, e1) => {
+						let elements = $(e1).find("ul li:not(.new-preview):not(.template)");
+						for (let s = 0; s < splits; s++) {
+							elements.each((i, e3) => {
+								ctx.beginPath();
+								ctx.moveTo(
+									(w - ((7 - categories.length) * 100)) / categories.length * c + ((7 - categories.length) * 50) - 100,
+									(h - 30) / splits * (s + 0.5) + 30
+								);
+								ctx.lineTo(
+									(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100,
+									(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
+								);
+								ctx.stroke();
+							});
+						}
+						splits *= elements.length;
+					});
+					
+					ctx.fillStyle = "#ffffff"
+					ctx.beginPath();
+					ctx.ellipse(
+						(7 - categories.length) * 50 - 100, (h - 30) / 2 + 30,
+						10, 10, 0, 0, Math.PI*2
+					);
+					ctx.fill();
+					ctx.stroke();
+
+					splits = 1;
+					categories.each((c, e1) => {
+						let elements = $(e1).find("ul li:not(.new-preview):not(.template)");
+						for (let s = 0; s < splits; s++) {
+							elements.each((i, e3) => {
+								ctx.fillStyle = combColors[c][i % 6];
+								ctx.beginPath();
+								ctx.ellipse(
+									(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100,
+									(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30,
+									10, 10, 0, 0, Math.PI*2
+								);
+								ctx.fill();
+								ctx.stroke();
+
+								if (c == categories.length - 1) {
+									ctx.textAlign = "left";
+									ctx.fillText(
+										$(e3).find(".element-text").text(),
+										(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100 + 20,
+										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
+									);
+								} else {
+									ctx.textAlign = "center";
+									ctx.fillText(
+										$(e3).find(".element-text").text(),
+										(w - ((7 - categories.length) * 100)) / categories.length * (c + 1) + ((7 - categories.length) * 50) - 100,
+										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) - 25 + 30
+									);
+								}
+							});
+						}
+						splits *= elements.length;
+					});
+				}
+			}
+
+			$(window).on("resize", updateCanvas);
+			updateCanvas();
+		</script>
+
+		<script>
+			function updateStuff() {
+				if ($("#categories > div").not(".new-preview").not(".template").length == 1) {
+					$("#permutation").show();
+					$("#hint").hide();
+				} else {
+					$("#permutation").hide();
+					$("#hint").show();
+				}
+
+				let categories = $("#categories > div:not(.new-preview):not(.template)");
+				if (categories.length == 1) {
+					let elements = categories.find("ul li:not(.new-preview):not(.template)");
+					$("#permutation .amount").text(elements.length == 1 ? "den ene mulighed" : `de ${elements.length} muligheder`);
+				}
+				if (categories.length == 1 && $("#permutation .enabled").is(":checked")) {
+					let elements = categories.find("ul li:not(.new-preview):not(.template)");
+
+					let permNumSelect = $("#permutation .num");
+					let steps = Math.min(Math.max(permNumSelect.val(), 1), elements.length);
+					permNumSelect.val(steps);
+
+					let perm = 1;
+					let calcStr = `Antal permutationer:  ${elements.length}! / (${elements.length} - ${steps})! = (`;
+					for (let s = 0; s < elements.length; s++) {
+						if (s > 0) calcStr += " ⋅ ";
+						calcStr += elements.length - s;
+						if (s < steps) perm *= elements.length - s;
+					}
+					calcStr += ") / ("
+					for (let s = steps; s < elements.length; s++) {
+						if (s > steps) calcStr += " ⋅ ";
+						calcStr += elements.length - s;
+					}
+					if (steps == elements.length) calcStr += "1";
+					calcStr += ") = " + perm;
+					$("#calculation").text(calcStr);
+				} else {
+					let comb = 1;
+					let calcStr = "Antal kombinationer:  ";
+					categories.each((i, e) => {
+						let elements = $(e).find("ul li:not(.new-preview):not(.template)");
+						if (elements.length == 0) return;
+						if (i > 0) calcStr += " ⋅ ";
+						calcStr += elements.length;
+						comb *= elements.length;
+					});
+					calcStr += " = " + comb;
+					$("#calculation").text(calcStr);
+				}
+
+				updateCanvas();
+			}
+
+			let newCategoryBtn = $("#categories > .new-preview");
+			newCategoryBtn.on("click", () => {
+				if ($("#categories > div").not(".new-preview").not(".template").length == 3) {
+					newCategoryBtn.hide();
+				}
+
 				let newCategory = $("#categories > .template").clone()
 					.removeClass("template").insertBefore(newCategoryBtn);
 				
@@ -176,39 +431,78 @@
 
 				newCategory.find("h2 .remove-btn").on("click", () => {
 					newCategory.remove();
+					newCategoryBtn.show();
+					updateStuff();
 				});
 
 				let elements = newCategory.find("ul");
 				let newButton = elements.find(".new-preview");
-				newButton.on("click", (_, doNotFocus) => {
-					let childrenCount = elements.children().not(".new-preview").not(".template").length;
+				newButton.on("click", (_, text) => {
+					if (elements.children().not(".new-preview").not(".template").length == 6) {
+						newButton.hide();
+					}
+
 					let newElement = elements.find(".template").clone()
 						.removeClass("template").insertBefore(newButton);
-					newElement.find(".remove-btn").on("click", () => {
+
+					let removeBtn = newElement.find(".remove-btn");
+					removeBtn.on("click", () => {
 						newElement.remove();
+						newButton.show();
+						updateStuff()
 					});
 
 					let elementText = newElement.find(".element-text");
-					elementText.text(`Mulighed ${childrenCount+1}`);
 					elementText.on("blur", (e) => {
 						if (elementText[0].textContent.trim().length == 0) {
-							elementText[0].textContent = "Mulighed";
+							let childrenCount = elements.children().not(".new-preview").not(".template").length;
+							elementText[0].textContent = `Mulighed ${childrenCount}`;
 						}
+						updateStuff();
 					}).on("keypress", (e) => {
 						if (e.key == "Enter") {
 							elementText.trigger("blur");
 						}
 					});
 
-					if (!doNotFocus) elementText.trigger("focus");
-				});
-				newButton.trigger("click", [true]);
-				newButton.trigger("click", [true]);
-			}
+					if (text) {
+						elementText[0].textContent = text;
+					} else {
+						elementText.trigger("focus");
+					}
 
-			newCategory();
-			newCategory();
-			newCategory();
+					updateStuff()
+				});
+				newButton.trigger("click", ["Mulighed 1"]);
+				newButton.trigger("click", ["Mulighed 2"]);
+
+				updateStuff();
+			});
+			newCategoryBtn.trigger("click");
+
+			$("#reset").on("click", () => {
+				$("#categories > div").not(".new-preview").not(".template").remove();
+				newCategoryBtn.trigger("click");
+				newCategoryBtn.trigger("click");
+				$("#permutation .enabled").attr("checked", false);
+			});
+
+			$("#permutation .enabled").on("input", () => {
+				if ($("#permutation .enabled").is(":checked")) {
+					$("#permutation").css({
+						"color": "",
+						"cursor": ""
+					});
+				} else {
+					$("#permutation").css({
+						"color": "#bbbbbb",
+						"cursor": "not-allowed"
+					});
+				}
+				updateStuff();
+			}).trigger("input");
+			
+			$("#permutation .num").on("blur", updateStuff).on("input", updateStuff);
 		</script>
 	</body>
 </html>
