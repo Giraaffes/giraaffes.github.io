@@ -197,14 +197,14 @@
 		</div>
 
 		<script>
-			// #######################################
-			// #            TAG DIG I AGT            #
-			// # FORNEDEN ER POTENTIELT ULOVLIG KODE #
-			// #  (Kode, der er så dårligt skrevet,  #
-			// #     at det burde være ulovligt.)    #
-			// #######################################
+			// ###########################################
+			// #              TAG DIG I AGT              #
+			// # FORNEDEN ER DER POTENTIELT ULOVLIG KODE #
+			// #    (Kode, der er så dårligt skrevet,    #
+			// #       at det burde være ulovligt.)      #
+			// ###########################################
 
-			// (Også foroven; HTML-koden er ret ringe)
+			// (Også foroven, HTML-koden er ret ringe)
 			// (Jeg skulle skrive det hele på én dag, okay)
 
 			function combinations() {
@@ -240,7 +240,15 @@
 						calcStr += elements.length - s;
 					}
 					if (steps == elements.length) calcStr += "1";
-					calcStr += ") = " + perm;
+					calcStr += ")";
+					if (steps > 1) {
+						calcStr += " = ";
+						for (let s = 0; s < steps; s++) {
+							if (s > 0) calcStr += " ⋅ ";
+							calcStr += elements.length - s;
+						}
+					}
+					calcStr += " = " + perm;
 					return { calcStr, perm };
 			}
 
@@ -351,7 +359,6 @@
 					ctx.lineCap = "round";
 					ctx.lineWidth = 3;
 					ctx.font = "1.2rem \"Varela Round\", sans-serif";
-					ctx.textBaseline = "middle";
 
 					let splits = 1;
 					let categories = $("#categories > div:not(.new-preview):not(.template)");
@@ -398,14 +405,22 @@
 								ctx.fill();
 								ctx.stroke();
 
-								if (c == categories.length - 1) {
+								let nextCategory = $(e1).next(":not(.new-preview):not(.template)");
+								let nextCategoryElements = nextCategory.find("ul li:not(.new-preview):not(.template)");
+								if (c == categories.length - 1 || nextCategoryElements.length == 1) {
 									ctx.textAlign = "left";
+									if (nextCategoryElements.length == 1) {
+										ctx.textBaseline = "bottom";
+									} else {
+										ctx.textBaseline = "middle";
+									}
 									ctx.fillText(
 										$(e3).find(".element-text").text(),
 										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60 + 20,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 									);
 								} else {
+									ctx.textBaseline = "middle";
 									ctx.textAlign = "center";
 									ctx.fillText(
 										$(e3).find(".element-text").text(),
