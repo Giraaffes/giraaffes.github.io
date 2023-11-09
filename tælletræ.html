@@ -191,8 +191,9 @@
 			<p id="calculation" style="margin-top: 0.5rem;">-</p>
 
 			<p id="hint">Hint: lad der være én enkel kategori for at opstille et tælletræ med permutationer</p>
-			<p id="reset">Jeg vil gerne starte forfra...</p>
+			<p id="reset" style="width: 15rem;">Jeg vil gerne starte forfra...</p>
 
+			<p id="too-many" style="text-align: center;"><br><br><br><br>Der er for mange muligheder til at kunne lave et tælletræ :(</p>
 			<canvas></canvas>
 		</div>
 
@@ -204,20 +205,27 @@
 			// #       at det burde være ulovligt.)      #
 			// ###########################################
 
-			// (Også foroven, HTML-koden er ret ringe)
+			// (Også foroven)
 			// (Jeg skulle skrive det hele på én dag, okay)
 
 			function combinations() {
-				let comb = 1;
-				let calcStr = "Antal kombinationer:  ";
 				let categories = $("#categories > div:not(.new-preview):not(.template)");
-				categories.each((i, e) => {
-					let elements = $(e).find("ul li:not(.new-preview):not(.template)");
-					if (elements.length == 0) return;
+				if (categories.length == 0) {
+					return { calcStr: "Tilføj en kategori for at starte :)", comb: 0 };
+				} else if (categories.length == 1) {
+					let firstElements = categories.first().find("ul li:not(.new-preview):not(.template)");
+					if (firstElements.lenght > 0) return { calcStr: `Antal kombinationer: ${firstElements.length}`, comb: firstElements.length };
+				}
+
+				let comb = 1;
+				let calcStr = "Antal kombinationer: ";
+				for (let i = 0; i < categories.length; i++) {
+					let elements = categories.eq(i).find("ul li:not(.new-preview):not(.template)");
+					if (elements.length == 0) return { calcStr: "Der kan ikke være 0 muligheder i en kategori :(", comb: 0 }
 					if (i > 0) calcStr += " ⋅ ";
 					calcStr += elements.length;
 					comb *= elements.length;
-				});
+				}
 				calcStr += " = " + comb;
 				return { calcStr, comb };
 			}
@@ -225,6 +233,9 @@
 			function permutations() {
 					let category = $("#categories > div:not(.new-preview):not(.template)");
 					let elements = category.find("ul li:not(.new-preview):not(.template)");
+					if (elements.length == 0) {
+						return { calcStr: "Der kan ikke være 0 muligheder i en kategori :(", comb: 0 };
+					}
 
 					let steps = $("#permutation .num").val();
 					let perm = 1;
@@ -268,6 +279,9 @@
 			let w, h;
 
 			function updateCanvas() {
+				$("canvas").show();
+				$("#too-many").hide();
+				
 				canvas.width("100%");
 				w = Math.ceil(canvas.width());
 				canvas.attr("width", w);
@@ -276,6 +290,15 @@
 				let categories = $("#categories > div:not(.new-preview):not(.template)");
 				if (categories.length == 1 && $("#permutation .enabled").is(":checked")) {
 					let { perm } = permutations();
+					if (perm > 1080) {
+						$("#too-many").show();
+						$("canvas").hide();
+						return;
+					} else if (perm == 0 || categories.length == 0) {
+						$("canvas").hide();
+						return;
+					}
+
 					canvas.attr("height", null);
 					h = Math.max(30 * (perm + 1), Math.ceil(canvas.height()));
 					canvas.attr("height", h);
@@ -351,6 +374,15 @@
 					drawTree(0, 1, 0, 0, []);
 				} else {
 					let { comb } = combinations();
+					if (comb > 1080) {
+						$("#too-many").show();
+						$("canvas").hide();
+						return;
+					} else if (comb == 0 || categories.length == 0) {
+						$("canvas").hide();
+						return;
+					}
+
 					canvas.attr("height", null);
 					h = Math.max(30 * (comb + 1), Math.ceil(canvas.height()));
 					canvas.attr("height", h);
@@ -361,7 +393,6 @@
 					ctx.font = "1.2rem \"Varela Round\", sans-serif";
 
 					let splits = 1;
-					let categories = $("#categories > div:not(.new-preview):not(.template)");
 					categories.each((c, e1) => {
 						let elements = $(e1).find("ul li:not(.new-preview):not(.template)");
 						for (let s = 0; s < splits; s++) {
@@ -441,7 +472,8 @@
 
 		<script>
 			function updateStuff() {
-				if ($("#categories > div").not(".new-preview").not(".template").length == 1) {
+				let categories = $("#categories > div:not(.new-preview):not(.template)");
+				if (categories.length == 1) {
 					$("#permutation").show();
 					$("#hint").hide();
 				} else {
@@ -449,7 +481,6 @@
 					$("#hint").show();
 				}
 
-				let categories = $("#categories > div:not(.new-preview):not(.template)");
 				if (categories.length == 1) {
 					let elements = categories.find("ul li:not(.new-preview):not(.template)");
 					$("#permutation .amount").text(elements.length == 1 ? "den ene mulighed" : `de ${elements.length} muligheder`);
@@ -473,12 +504,15 @@
 
 			let newCategoryBtn = $("#categories > .new-preview");
 			newCategoryBtn.on("click", (_, name, elementNames) => {
-				if ($("#categories > div").not(".new-preview").not(".template").length == 3) {
-					newCategoryBtn.hide();
-				}
-
 				let newCategory = $("#categories > .template").clone()
 					.removeClass("template").insertBefore(newCategoryBtn);
+
+				let categories = $("#categories > div:not(.new-preview):not(.template)");
+				if (categories.length == 1) {
+					$("#permutation .enabled").prop("checked", false).trigger("input", [true]);
+				} else if (categories.length == 4) {
+					newCategoryBtn.hide();
+				}
 				
 				let titleText = newCategory.find(".title-text");
 				titleText.on("blur", (e) => {
@@ -490,18 +524,25 @@
 						titleText.trigger("blur");
 					}
 				});
-				if (name) titleText.text(name);
+				if (name) {
+					titleText.text(name);
+				} else {
+					titleText[0].textContent = `Kategori ${categories.length}`;
+				}
 
 				newCategory.find("h2 .remove-btn").on("click", () => {
 					newCategory.remove();
 					newCategoryBtn.show();
+					if ($("#categories > div:not(.new-preview):not(.template)").length == 1) {
+						$("#permutation .enabled").prop("checked", false).trigger("input", [true]);
+					}
 					updateStuff();
 				});
 
 				let elements = newCategory.find("ul");
 				let newButton = elements.find(".new-preview");
 				newButton.on("click", (_, text) => {
-					if (elements.children().not(".new-preview").not(".template").length == 6) {
+					if (elements.children().not(".new-preview").not(".template").length == 9) {
 						newButton.hide();
 					}
 
@@ -552,25 +593,37 @@
 				$("#categories > div").not(".new-preview").not(".template").remove();
 				newCategoryBtn.trigger("click");
 				newCategoryBtn.trigger("click");
-				$("#permutation .enabled").attr("checked", false);
 			});
 
-			$("#permutation .enabled").on("input", () => {
+			$("#permutation .enabled").on("input", (_, doNotUpdateStuff) => {
 				if ($("#permutation .enabled").is(":checked")) {
 					$("#permutation").css({
 						"color": "",
 						"cursor": ""
 					});
+					$("#permutation .num").removeAttr("disabled");
 				} else {
 					$("#permutation").css({
 						"color": "#bbbbbb",
 						"cursor": "not-allowed"
 					});
+					$("#permutation .num").attr("disabled", "yes");
 				}
-				updateStuff();
+				if (!doNotUpdateStuff) updateStuff();
 			}).trigger("input");
 			
-			$("#permutation .num").on("blur", updateStuff).on("input", updateStuff);
+			let permNumSelect = $("#permutation .num");
+			permNumSelect.on("blur", updateStuff).on("input", updateStuff).on("keydown", (e) => {
+				let category = $("#categories > div:not(.new-preview):not(.template)");
+				let elements = category.find("ul li:not(.new-preview):not(.template)");
+
+				let num = parseInt(e.key, 10);
+				if (num && !(elements.length == 10 && num == 0 && permNumSelect.val() == 1)) {
+					e.preventDefault();
+					permNumSelect.val(num);
+					updateStuff();
+				}
+			});
 
 			newCategoryBtn.trigger("click", ["Forret", ["Suppe", "Brød"]]);
 			newCategoryBtn.trigger("click", ["Hovedret", ["And", "Okse", "Vegetar", "Fisk"]]);
