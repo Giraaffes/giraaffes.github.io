@@ -213,8 +213,8 @@
 				if (categories.length == 0) {
 					return { calcStr: "Tilføj en kategori for at starte :)", comb: 0 };
 				} else if (categories.length == 1) {
-					let firstElements = categories.first().find("ul li:not(.new-preview):not(.template)");
-					if (firstElements.lenght > 0) return { calcStr: `Antal kombinationer: ${firstElements.length}`, comb: firstElements.length };
+					let firstElements = categories.find("ul li:not(.new-preview):not(.template)");
+					if (firstElements.length > 0) return { calcStr: `Antal kombinationer: ${firstElements.length}`, comb: firstElements.length };
 				}
 
 				let comb = 1;
