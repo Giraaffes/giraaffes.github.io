@@ -591,6 +591,7 @@
 
 			$("#reset").on("click", () => {
 				$("#categories > div").not(".new-preview").not(".template").remove();
+				$("#categories > .new-preview").show();
 				newCategoryBtn.trigger("click");
 				newCategoryBtn.trigger("click");
 			});
