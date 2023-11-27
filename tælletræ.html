@@ -162,6 +162,10 @@
 				flex-grow: 1;
 				margin-top: 2rem;
 			}
+
+			input:hover {
+				cursor: pointer;
+			}
 		</style>
 	</head>
 	
@@ -190,6 +194,7 @@
 			<p id="permutation" style="margin-bottom: 1.5rem;"><input class="enabled" type="checkbox" autocomplete="off"> Find permutationer (hvor man vælger <input class="num" style="width: 4rem" type="number" autocomplete="off" value="2"> ud af <span class="amount">de x muligheder</span>)</p>
 			<p id="calculation" style="margin-top: 0.5rem;">-</p>
 
+			<p id="probabilities" style="display: none;"><input class="enabled" type="checkbox" autocomplete="off">Opstil et chancetræ! (Skriv en brøk til sidst ved hver, f.eks. "Vegetar 1/6")</p>
 			<p id="hint">Hint: lad der være én enkel kategori for at opstille et tælletræ med permutationer</p>
 			<p id="reset" style="width: 15rem;">Jeg vil gerne starte forfra...</p>
 
@@ -261,6 +266,11 @@
 					}
 					calcStr += " = " + perm;
 					return { calcStr, perm };
+			}
+
+			// https://stackoverflow.com/a/17445304
+			function gcd(a, b) {
+				return !b ? a : gcd(b, a % b);
 			}
 
 
@@ -383,6 +393,8 @@
 						return;
 					}
 
+					let chancetræ = $("#probabilities .enabled").is(":checked");
+
 					canvas.attr("height", null);
 					h = Math.max(30 * (comb + 1), Math.ceil(canvas.height()));
 					canvas.attr("height", h);
@@ -436,6 +448,16 @@
 								ctx.fill();
 								ctx.stroke();
 
+								let text = $(e3).find(".element-text").text();
+								let match = text.match(/(.+)\s+(\d+)\/(\d+)\s*$/);
+								let forkortetChanceStr;
+								if (chancetræ && match) {
+									let chanceNum = parseInt(match[2], 10);
+									let chanceDen = parseInt(match[3], 10);
+									let chanceGCD = gcd(chanceNum, chanceDen);
+									forkortetChanceStr = `${chanceNum / chanceGCD}/${chanceDen / chanceGCD}`;
+								}
+
 								let nextCategory = $(e1).next(":not(.new-preview):not(.template)");
 								let nextCategoryElements = nextCategory.find("ul li:not(.new-preview):not(.template)");
 								if (c == categories.length - 1 || nextCategoryElements.length == 1) {
@@ -445,19 +467,43 @@
 									} else {
 										ctx.textBaseline = "middle";
 									}
+
+									let nameStr = chancetræ && match ? match[1] : text;
+
+									ctx.fillStyle = combColors[c][i % 6];
 									ctx.fillText(
-										$(e3).find(".element-text").text(),
+										nameStr,
 										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60 + 20,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 									);
+									if (chancetræ && match) {
+										ctx.fillStyle = "#444444";
+										ctx.fillText(
+											forkortetChanceStr,
+											w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60 + 20 + nameStr.length * 10 + 20,
+											(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
+										);
+									}
 								} else {
 									ctx.textBaseline = "middle";
 									ctx.textAlign = "center";
+									
+									let nameStr = chancetræ && match ? match[1] : text;
+
+									ctx.fillStyle = combColors[c][i % 6];
 									ctx.fillText(
-										$(e3).find(".element-text").text(),
+										nameStr,
 										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) - 25 + 30
 									);
+									if (chancetræ && match) {
+										ctx.fillStyle = "#444444";
+										ctx.fillText(
+											forkortetChanceStr,
+											w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60,
+											(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) - 25 + 30 - 20
+										);
+									}
 								}
 							});
 						}
@@ -476,9 +522,11 @@
 				if (categories.length == 1) {
 					$("#permutation").show();
 					$("#hint").hide();
+					//$("#probabilities").hide();
 				} else {
 					$("#permutation").hide();
 					$("#hint").show();
+					//$("#probabilities").show();
 				}
 
 				if (categories.length == 1) {
