@@ -194,7 +194,7 @@
 			<p id="permutation" style="margin-bottom: 1.5rem;"><input class="enabled" type="checkbox" autocomplete="off"> Find permutationer (hvor man vælger <input class="num" style="width: 4rem" type="number" autocomplete="off" value="2"> ud af <span class="amount">de x muligheder</span>)</p>
 			<p id="calculation" style="margin-top: 0.5rem;">-</p>
 
-			<p id="probabilities" style="display: none;"><input class="enabled" type="checkbox" autocomplete="off">Opstil et chancetræ! (Skriv en brøk til sidst ved hver, f.eks. "Vegetar 1/6")</p>
+			<p id="probabilities" style="position: relative;"><input class="enabled" type="checkbox" autocomplete="off"> Opstil et chancetræ! (Skriv en ægte brøk til sidst ved hver mulighed, f.eks. "Vegetar 1/6")<img src="./aaa.png" style="opacity: 0.65; pointer-events: none; user-select: none; position: absolute; left: 45.5rem; top: -2.2rem; width: 15rem;"/></p>
 			<p id="hint">Hint: lad der være én enkel kategori for at opstille et tælletræ med permutationer</p>
 			<p id="reset" style="width: 15rem;">Jeg vil gerne starte forfra...</p>
 
@@ -212,6 +212,7 @@
 
 			// (Også foroven)
 			// (Jeg skulle skrive det hele på én dag, okay)
+			// (Okay ikke det hele)
 
 			function combinations() {
 				let categories = $("#categories > div:not(.new-preview):not(.template)");
@@ -393,7 +394,7 @@
 						return;
 					}
 
-					let chancetræ = $("#probabilities .enabled").is(":checked");
+					let chancetræ = $("#probabilities .enabled").is(":checked") && categories.length > 1;
 
 					canvas.attr("height", null);
 					h = Math.max(30 * (comb + 1), Math.ceil(canvas.height()));
@@ -433,8 +434,12 @@
 					ctx.fill();
 					ctx.stroke();
 
+					let brøker = [];
+
 					splits = 1;
 					categories.each((c, e1) => {
+						brøker[c] = [];
+
 						let elements = $(e1).find("ul li:not(.new-preview):not(.template)");
 						for (let s = 0; s < splits; s++) {
 							elements.each((i, e3) => {
@@ -450,12 +455,24 @@
 
 								let text = $(e3).find(".element-text").text();
 								let match = text.match(/(.+)\s+(\d+)\/(\d+)\s*$/);
+								let nameStr = chancetræ && match ? match[1] : text;
+								let newS = s * elements.length + i;
+								brøker[c][newS] = null;
 								let forkortetChanceStr;
 								if (chancetræ && match) {
 									let chanceNum = parseInt(match[2], 10);
 									let chanceDen = parseInt(match[3], 10);
-									let chanceGCD = gcd(chanceNum, chanceDen);
-									forkortetChanceStr = `${chanceNum / chanceGCD}/${chanceDen / chanceGCD}`;
+									if (chanceNum <= chanceDen && chanceDen != 0) {
+										if (brøker[c-1] && brøker[c-1][s]) { // This is where the chancetræ magic happens
+											let theUhhNextGcdOrSomething = gcd(chanceNum * brøker[c-1][s].n, chanceDen * brøker[c-1][s].d); // I'm going insane
+											brøker[c][newS] = {n: chanceNum * brøker[c-1][s].n / theUhhNextGcdOrSomething, d: chanceDen * brøker[c-1][s].d / theUhhNextGcdOrSomething};
+											forkortetChanceStr = `${brøker[c][newS].n}/${brøker[c][newS].d}`;
+										} else if (c == 0) { // Programming at it's peak
+											let chanceGCD = gcd(chanceNum, chanceDen);
+											brøker[c][newS] = {n: chanceNum / chanceGCD, d: chanceDen / chanceGCD};
+											forkortetChanceStr = `${brøker[c][newS].n}/${brøker[c][newS].d}`;
+										}
+									}
 								}
 
 								let nextCategory = $(e1).next(":not(.new-preview):not(.template)");
@@ -468,18 +485,16 @@
 										ctx.textBaseline = "middle";
 									}
 
-									let nameStr = chancetræ && match ? match[1] : text;
-
 									ctx.fillStyle = combColors[c][i % 6];
 									ctx.fillText(
 										nameStr,
 										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60 + 20,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 									);
-									if (chancetræ && match) {
+									if (chancetræ) {
 										ctx.fillStyle = "#444444";
 										ctx.fillText(
-											forkortetChanceStr,
+											forkortetChanceStr || "?/?",
 											w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60 + 20 + nameStr.length * 10 + 20,
 											(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) + 30
 										);
@@ -487,8 +502,6 @@
 								} else {
 									ctx.textBaseline = "middle";
 									ctx.textAlign = "center";
-									
-									let nameStr = chancetræ && match ? match[1] : text;
 
 									ctx.fillStyle = combColors[c][i % 6];
 									ctx.fillText(
@@ -496,10 +509,10 @@
 										w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60,
 										(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) - 25 + 30
 									);
-									if (chancetræ && match) {
+									if (chancetræ) {
 										ctx.fillStyle = "#444444";
 										ctx.fillText(
-											forkortetChanceStr,
+											forkortetChanceStr || "?/?",
 											w * (0.4 + 0.1 * categories.length) / categories.length * (c + 1) + w * (0.3 - 0.05 * categories.length) - 60,
 											(h - 30) / (splits * elements.length) * (elements.length * s + i + 0.5) - 25 + 30 - 20
 										);
@@ -522,11 +535,11 @@
 				if (categories.length == 1) {
 					$("#permutation").show();
 					$("#hint").hide();
-					//$("#probabilities").hide();
+					$("#probabilities").hide();
 				} else {
 					$("#permutation").hide();
 					$("#hint").show();
-					//$("#probabilities").show();
+					$("#probabilities").show();
 				}
 
 				if (categories.length == 1) {
@@ -672,6 +685,10 @@
 					permNumSelect.val(num);
 					updateStuff();
 				}
+			});
+
+			$("#probabilities .enabled").on("input", () => {
+				updateStuff();
 			});
 
 			newCategoryBtn.trigger("click", ["Forret", ["Suppe", "Brød"]]);
