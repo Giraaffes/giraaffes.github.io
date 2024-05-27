@@ -10,11 +10,12 @@
 			/* (R) Constants */
 			:root {
 				--bgr1: #1B1B1B;
-				--bgr2: #0e0e0e;
+				--bgr2: #0E0E0E;
 				--dark: #131313;
 				--ui1: #323232;
 				--ui2: #888888;
 				--ui3: #5B5B5B;
+				--ui4: #C0C0C0;
 			}
 
 			/* (R) Page */
@@ -228,7 +229,7 @@
 				border: none;
 				border-radius: 1rem;
 			}
-			#prompt .input, #prompt .saved .saved-prompt {
+			#prompt .input, #prompt .saved > * {
 				height: 3rem;
 				line-height: 3rem;
 				font-size: 0.9rem;
@@ -262,8 +263,9 @@
 				border-top-left-radius: 0;
 				border-top-right-radius: 0;
 			}
-			#prompt .saved .saved-prompt {
+			#prompt .saved > * {
 				height: 3rem;
+				color: var(--ui4);
 				background-color: #00000024;
 
 				position: relative;
@@ -545,7 +547,7 @@
 				{name: "horror", id: 123}, {name: "baroque", id: 120},
 				{name: "monster", id: 119}, {name: "figure", id: 118},
 			];
-			const maxResGridSize = 5;
+			const maxResGridSize = 3;
 			const startGenerationInterval = 200;
 			const checkGenerationInterval = 2000;
 
