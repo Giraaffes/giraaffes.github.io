@@ -810,10 +810,14 @@
 			// (B) Generation
 			let genQueue = [];
 
+			function corsProxy(url) {
+				return `https://www.htgnyt.dk/cors?url=${url}`;
+			}
+
 			async function startGeneration(index) {
 				let resImg = $(".res-img").eq(index);
 
-				let res = await fetch("http://64.226.88.255/https://paint.api.wombo.ai/api/v2/tasks", {
+				let res = await fetch(corsProxy("https://paint.api.wombo.ai/api/v2/tasks"), {
 					method: "POST",
 					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": "WEB-2.0.0"},
 					body: JSON.stringify({input_spec: {
@@ -843,7 +847,7 @@
 			}
 
 			async function checkGeneration(id, $resImg) {
-				let res = await fetch(`http://64.226.88.255/https://paint.api.wombo.ai/api/v2/tasks/${id}`, {
+				let res = await fetch(corsProxy(`https://paint.api.wombo.ai/api/v2/tasks/${id}`), {
 					method: "GET",
 					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": "WEB-2.0.0"}
 				});
