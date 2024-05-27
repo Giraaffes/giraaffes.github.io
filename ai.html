@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		<script src="https://kit.fontawesome.com/8ef543fcad.js" crossorigin="anonymous"></script>
+
+		<style>
+			/* SECTION CSS*/
+			/* (R) Constants */
+			:root {
+				--bgr1: #1B1B1B;
+				--bgr2: #0e0e0e;
+				--dark: #131313;
+				--ui1: #323232;
+				--ui2: #888888;
+				--ui3: #5B5B5B;
+			}
+
+			/* (R) Page */
+			html {
+				height: 100%;
+
+				font-family: "Montserrat";
+				color: white;
+			}
+			body {
+				height: 100%;
+				margin: 0;
+				background: radial-gradient(circle farthest-corner, var(--bgr1), var(--bgr1) 85%, var(--bgr2));
+
+				display: flex;
+				justify-content: center;
+			}
+			body > section {
+				padding: 2rem 2rem;
+				height: 100%;
+				box-sizing: border-box;
+			}
+
+			/* (O) Animations */
+			@keyframes shake {
+				0% {
+					transform: rotate(0deg);
+				}
+				20% {
+					transform: rotate(3deg);
+				}
+				40% {
+					transform: rotate(-3deg);
+				}
+				60% {
+					transform: rotate(1.5deg);
+				}
+				80% {
+					transform: rotate(-1.5deg);
+				}
+				100% {
+					transform: rotate(0deg);
+				}
+			}
+
+			@keyframes grow {
+				from {
+					transform: scale(100%);
+				}
+				to {
+					transform: scale(105%);
+				}
+			}
+
+			@keyframes slam {
+				0% {
+					transform: scale(105%);
+				}
+				50% {	
+					transform: scale(98%);
+				}
+				100% {
+					transform: scale(100%);
+				}
+			}
+
+			/* (O) General element styles */
+			p {
+				font-size: 0.9rem;
+				font-weight: 400;
+				color: var(--ui2);
+			}
+			h1 {
+				font-size: 1.5rem;
+				font-weight: 600;
+				text-shadow: 0 0 10px black;
+			}
+			hr {
+				margin: 0;
+				width: 2px;
+				height: 100vh;
+				border: none;
+				background-color: var(--dark);
+			}
+			br {
+				line-height: 3;
+			}
+
+			.clickable:not(:has(.clickable-overlay:hover)):hover {
+				background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+				cursor: pointer;
+			}
+			.clickable:not(:has(.clickable-overlay:hover)):active {
+				background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
+			}
+			i {
+				pointer-events: none;
+			}
+
+			/* (Y) Art style select */
+			#art-style-select {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			#art-style-select h1 {
+				text-align: center;
+				margin-top: 0;
+				margin-bottom: 1.5rem;
+			}
+
+			#art-styles-container {
+				position: relative;
+				width: 100%;
+				min-height: 0;
+			}
+			#art-styles {
+				width: round(down, 100%, 8rem);	
+				height: 100%;
+				margin: auto;
+				padding: 0.75rem 0;
+				box-sizing: border-box;
+				
+				display: grid;
+				grid: auto-flow / repeat(auto-fit, 8rem);
+				row-gap: 0.5rem;
+				place-items: stretch center;
+
+				overflow-y: auto;
+				scrollbar-width: none
+			}
+			.inset-shadow {
+				position: absolute;
+				width: 100%;
+				height: 20%;
+				pointer-events: none;
+
+				&.top {
+					top: 0;
+					box-shadow: inset 0 10px 5px -5px #00000050;
+				}
+				&.bottom {
+					bottom: 0;
+					box-shadow: inset 0 -10px 5px -5px #00000050;
+				}
+
+				transition: opacity 0.1s;
+			}
+
+			.art-style {
+				margin: 0;
+				padding: 0.5rem 1rem;
+
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.5rem;
+
+				&:hover { cursor:pointer }
+			}
+			.art-style img {
+				height: 5.5rem;
+				border-radius: 0.6rem;
+
+				.art-style:hover & { transform: scale(105%); }
+				transition: transform 0.1s ease-out;
+
+				border: 3px solid transparent;
+				.art-style.selected & { border: 3px solid #5D4BEF; }
+			} 
+			.art-style figcaption {
+				font-size: 0.8rem;
+				font-weight: 400;
+				text-align: center;
+			}
+
+			/* (G) Prompt select - input */
+			#prompt-select * {
+				box-sizing: border-box;
+				outline: none;
+				margin: 0;
+			}
+			#prompt-select > h1 {
+				text-align: center;
+				margin-bottom: 1rem;
+			}
+			#prompt-select > * {
+				margin-bottom: 0.4rem;
+			}
+
+			#prompt-container {
+				height: 3rem;
+				margin-left: -0.25rem;
+				display: flex;
+				gap: 0.3rem;
+			}
+			#prompt {
+				flex: 1;
+				position: relative;
+			}
+			#saved-prompts-btn {
+				aspect-ratio: 1;
+				font-size: 1.1rem;
+
+				.close-icon { display: none; }
+				i { color: var(--ui2); }
+			}
+
+			#prompt > *, #saved-prompts-btn	 {
+				background-color: var(--ui1);
+				border: none;
+				border-radius: 1rem;
+			}
+			#prompt .input, #prompt .saved .saved-prompt {
+				height: 3rem;
+				line-height: 3rem;
+				font-size: 0.9rem;
+				padding: 0;
+				padding-left: 1rem;
+				padding-right: 3rem;
+
+				font-family: "Montserrat";
+				color: #ffffff;
+			}
+
+			#prompt .input {
+				width: 100%;
+				z-index: 3;
+
+				background-color: var(--ui1);
+				border: 1px solid transparent;
+				&:focus { border: 1px solid var(--ui3); }
+				&::placeholder { color: var(--ui2); }
+			}
+			
+			#prompt .saved {
+				position: absolute;
+				width: 100%;
+				padding: 0;
+				z-index: 2;
+				overflow: hidden;
+				display: none;
+
+				box-sizing: content-box;
+				border-top-left-radius: 0;
+				border-top-right-radius: 0;
+			}
+			#prompt .saved .saved-prompt {
+				height: 3rem;
+				background-color: #00000024;
+
+				position: relative;
+				&:first-child {
+					box-shadow: inset 0 10px 5px -5px #00000010;
+				}
+				&:not(:first-child)::before {
+					content: "";
+					position: absolute;
+					top: 0;
+					left: 1rem;
+					right: 1rem;
+					height: 2px;
+					background: linear-gradient(90deg, #00000000, #00000040 10%, #00000040 90%, #00000000);
+				}
+
+				.text {
+					display: block;
+					margin-left: 1px;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+			}
+			#prompt .saved .empty-info {
+				color: var(--ui2);
+				&:not(:only-child) {
+					display: none;
+				}
+			}
+
+			#prompt-container.show-saved {
+				.input {
+					border-bottom-left-radius: 0;
+					border-bottom-right-radius: 0;
+				}
+				.saved {
+					display: block;
+				}
+				#saved-prompts-btn .close-icon {
+					display: initial;
+				}
+				#saved-prompts-btn .open-icon {
+					display: none;
+				}
+			}
+
+			#prompt .side-btn {
+				position: absolute;
+				width: 3rem;
+				height: 3rem;
+				right: 0;
+				top: 0;
+
+				background: none;
+				border: none;	
+				font-size: 0.95rem;
+				color: var(--ui2);
+
+				&:hover {
+					transform: scale(120%);
+					cursor: pointer;
+				}
+				transition: transform 0.1s ease-out;
+			}
+			#prompt .save-btn {
+				border-radius: 0;
+				border-top-right-radius: 1rem;
+				#prompt-container:not(.show-saved) & { 
+					border-bottom-right-radius: 1rem; 
+				}
+
+				#prompt:has(.input:placeholder-shown) & {
+					display: none;
+				}
+			}
+			#prompt-container.current-saved .save-btn {
+				color: #ffffff;
+			}
+			#prompt .delete-btn {
+				font-size: 0.85rem;
+				filter: brightness(70%);
+			}
+
+			/* (G) Prompt select - image */
+
+			/* (G) Prompt select - create */
+			div:has(> #create-button) {
+				display: flex;
+				place-content: center;
+			}
+			#create-button {
+				width: 20rem;
+				max-width: 100%;
+				height: 3rem;
+
+				border: none;
+				border-radius: 2rem;
+
+				font-family: "Montserrat";
+				font-size: 1rem;
+				font-weight: 600;
+				color: var(--dark);
+
+				background-color: var(--ui2);
+				&.clickable {
+					background-color: #ffffff;
+				}
+			}
+
+			/* (C) Results */
+			#results {
+				display: grid;
+				grid: 3rem 1fr 1fr / 1fr 1fr 3rem;
+				gap: 0.25rem;
+				max-height: 100vh;
+				max-width: 100vw;
+			}
+
+			.res-grid-size {
+				background-color: var(--ui2);
+				color: var(--dark);
+				font-weight: 800;
+				border: none;
+				--w: 2.25rem;
+				--h: 1.75rem;
+				--r1: 0.8rem;
+				--r2: 0.4rem;
+			}
+			.res-grid-size.w { 
+				width: var(--w);
+				height: var(--h);
+				border-radius: var(--r1) var(--r2) var(--r2) var(--r1);
+				grid-row: 1;
+				align-self: start;
+			}
+			.res-grid-size.h { 
+				width: var(--h);
+				height: var(--w);
+				border-radius: var(--r1) var(--r1) var(--r2) var(--r2);
+				grid-column: 3;
+				justify-self: end;
+			}
+
+			#res-grid-container {
+				grid-column: 1 / span 2;
+				grid-row: 2 / span 2;
+				place-self: stretch center;
+
+				height: 100%;
+				max-width: 100%;
+				aspect-ratio: 1;
+
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+			}
+			#res-grid {
+				width: 100%;
+				aspect-ratio: 1;
+
+				display: grid;
+				place-items: center;
+				gap: 0.5rem;
+			}
+			.res-img {
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+
+				background: linear-gradient(16deg, rgba(186,155,223,1) 0%, rgba(199,102,170,1) 45%, rgba(199,102,170,1) 55%, rgba(228,128,140,1) 100%); 
+				border-radius: 10px;
+
+				transition: filter 0.45s linear;
+
+				& img {
+					width: 100%;
+					height: 100%;
+					transition: opacity 0.4s ease-out; 
+				}
+			}
+			.res-img.generating {
+				transition: filter 0.01s linear 0.5s;
+				filter: hue-rotate(-140deg);
+
+				& img {
+					opacity: 0;
+				}
+			}
+			/* !SECTION */
+		</style>
+	</head>
+	<body>
+		<!-- SECTION HTML -->
+		<!-- (Y) Art style select -->
+		<section id="art-style-select" style="width: 25%;">
+			<h1>Choose art style</h1>
+			<div id="art-styles-container">
+				<div class="inset-shadow top"></div>
+				<div id="art-styles"></div>
+				<div class="inset-shadow bottom"></div>
+			</div>
+		</section><hr>
+		
+		<!-- (G) Prompt select -->
+		<section id="prompt-select" style="width: 25%;">
+			<h1>Enter prompt</h1>
+			<div id="prompt-container">
+				<div id="prompt">
+					<input class="input" type="text" placeholder="A beautiful landscape...">
+					<button class="side-btn save-btn">
+						<i class="fa-solid fa-bookmark"></i>
+					</button>
+					<li class="saved"><ul class="empty-info">You have no saved prompts</ul></li>
+				</div>
+				<button class="clickable" id="saved-prompts-btn">
+					<i class="fa-solid fa-angle-down open-icon"></i>
+					<i class="fa-solid fa-angle-up close-icon"></i>
+				</button>
+			</div>
+			<p><span id="prompt-charcount">0</span>/320 characters</p>
+			<br>
+			<h1>Select input image</h1>
+			<p>Coming soon...</p>
+			<br><br>
+			<div><button id="create-button">Create</button></div>
+		</section><hr>
+
+		<!-- (C) Results -->
+		<section id="results" style="width: 30%;">
+			<button class="clickable res-grid-size dec w" style="grid-column: 1; justify-self: end;">
+				<i class="fa-solid fa-minus"></i>
+			</button>
+			<button class="clickable res-grid-size inc w" style="grid-column: 2; justify-self: start; transform: rotate(180deg);">
+				<i class="fa-solid fa-plus"></i>
+			</button>
+			<button class="clickable res-grid-size dec h" style="grid-row: 2; align-self: end;">
+				<i class="fa-solid fa-minus"></i>
+			</button>
+			<button class="clickable res-grid-size inc h" style="grid-row: 3; align-self: start; transform: rotate(180deg);">
+				<i class="fa-solid fa-plus"></i>
+			</button>
+
+			<div id="res-grid-container"><div id="res-grid"></div></div>
+		</section>
+
+		<!-- (_) Templates -->
+		<div id="templates" style="display: none;">
+			<ul class="saved-prompt clickable">
+				<span class="text"></span>
+				<button class="clickable-overlay side-btn delete-btn">
+					<i class="fa-solid fa-trash"></i>
+				</button>
+			</ul>
+			<figure class="art-style">
+				<img><figcaption></figcaption>
+			</figure>
+			<div class="res-img"><img src="blank.png"></div>
+		</div>
+		<!-- !SECTION -->
+
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+		<script>
+			// SECTION JS
+			// (R) Constants
+			const styles = [
+				{name: "dreamland", id: 115}, {name: "graffiti", id: 148},
+				{name: "clay", id: 147}, {name: "tao", id: 141},
+				{name: "robots", id: 145}, {name: "crochet", id: 144},
+				{name: "mechanical b", id: 140}, {name: "mechanical a", id: 139},
+				{name: "ukiyo-e", id: 138}, {name: "tattoo", id: 137},
+				{name: "colored tattoo", id: 136}, {name: "botany", id: 135},
+				{name: "starry", id: 134}, {name: "retro pop", id: 133},
+				{name: "logo", id: 132}, {name: "sticker", id: 131},
+				{name: "hdr", id: 130}, {name: "sketch", id: 129},
+				{name: "cartoonist", id: 128}, {name: "anime", id: 126},
+				{name: "ink", id: 122}, {name: "whimsical", id: 124},
+				{name: "festive", id: 125}, {name: "dark fantasy", id: 121},
+				{name: "horror", id: 123}, {name: "baroque", id: 120},
+				{name: "monster", id: 119}, {name: "figure", id: 118},
+			];
+			const maxResGridSize = 5;
+			const startGenerationInterval = 200;
+			const checkGenerationInterval = 2000;
+
+			// (O) Animations
+			const animations = {
+				"shake": [["shake", 0.5]],
+				"slam": [["grow", 0.4, "ease-out"], ["slam", 0.25, "ease-out"]]
+			};
+
+			let animationQueues = new Map();
+			
+			function queueAnimation($element, keyframes, duration, settings) {
+				let queue = animationQueues.get($element[0]);
+				if (!queue) animationQueues.set($element[0], queue = []);
+
+				queue.push(() => {
+					$element.css("animation", `${keyframes} ${duration}s ${settings.join(" ")}`);
+					setTimeout(() => {
+						queue.shift();
+						if (queue[0]) {
+							queue[0]();
+						} else {
+							$element.css("animation", "unset");
+						}
+					}, duration * 1000 * 0.9);
+				});
+				
+				if (queue.length == 1) {
+					queue[0]();
+				}
+			}
+
+			function playAnimation($element, animationName) {
+				for (let [ keyframes, duration, ...settings ] of animations[animationName]) {
+					queueAnimation($element, keyframes, duration, settings);
+				}
+			}
+
+			// (O) UI
+			$("#prompt .input").on("input", () => {
+				$("#prompt-charcount").text($("#prompt .input").val().length);
+			}).trigger("input");
+
+			$("#art-styles").on("scroll", () => {
+				let { offsetHeight, scrollHeight, scrollTop} = $("#art-styles")[0];
+				let bottomScrollTop = scrollHeight - offsetHeight;
+
+				$("#art-styles-container .inset-shadow").css("opacity", 1);
+				if (scrollTop < 5) {
+					$("#art-styles-container .inset-shadow.top").css("opacity", 0);
+				} else if (bottomScrollTop - scrollTop < 5) {
+					$("#art-styles-container .inset-shadow.bottom").css("opacity", 0);
+				}
+			}).trigger("scroll");
+
+			// (Y) Art styles
+			let selectedStyle = parseInt(localStorage.getItem("selectedStyle")) || 115;
+
+			function title(style) {
+				if (style.name == "hdr") return "HDR"; 
+				return style.name.replaceAll(/(?<=\W|^)\w/g, 
+					(l) => l.toUpperCase()
+				);
+			}
+			function img_path(style) { 
+				return `ai-styles/${style.name.replaceAll(" ", "_")}.jpg`;
+			}
+			$("#art-styles").append(styles.map(s => {
+				let el = $("#templates .art-style").clone().attr("data-id", s.id);
+				el.find("img").attr("src", img_path(s));
+				el.find("figcaption").text(title(s));
+				return el;
+			}));
+
+			function selectStyle(id) {
+				selectedStyle = id;
+				$(".selected").removeClass("selected");
+				$(`.art-style[data-id=${id}]`).addClass("selected");
+
+				localStorage.setItem("selectedStyle", id.toString());
+			}
+			$(".art-style").on("click", e => {
+				selectStyle($(e.currentTarget).data("id"));
+			});
+			selectStyle(selectedStyle);
+
+			// (G) Saved Prompts
+			let savedPrompts = JSON.parse(localStorage.getItem("savedPrompts")) || [];
+
+			function selectSavedPrompt(e) {
+				$("#prompt .input").val($(e.currentTarget).find(".text").text()).trigger("input");
+				$("#prompt-container").toggleClass("show-saved");
+				checkCurrentPromptSaved();
+			}
+
+			function deleteSavedPrompt(e) {
+				e.stopPropagation();
+
+				let promptEl = $(e.target).parent();
+				savedPrompts.splice(promptEl.index() - 1, 1);
+				promptEl.remove();
+				checkCurrentPromptSaved();
+				storeSavedPrompts();
+			}
+
+			function loadSavedPrompts() {
+				$("#prompt .saved > :not(.empty-info)").remove();
+				$("#prompt .saved").append(savedPrompts.map(p => {
+					let el = $("#templates .saved-prompt").clone();
+					el.find(".text").text(p);
+					el.on("click", selectSavedPrompt);
+					el.find(".delete-btn").on("click", deleteSavedPrompt);
+					return el;
+				}));
+			}
+			loadSavedPrompts();
+
+			function storeSavedPrompts() {
+				localStorage.setItem("savedPrompts", JSON.stringify(savedPrompts));
+			}
+
+			function checkCurrentPromptSaved() {
+				let val = $("#prompt .input").val();
+				if (savedPrompts.includes(val)) {
+					$("#prompt-container").addClass("current-saved");
+				} else {
+					$("#prompt-container").removeClass("current-saved");
+				}
+			}
+			checkCurrentPromptSaved();
+			$("#prompt .input").on("input", checkCurrentPromptSaved);
+
+			function savePrompt() {
+				let toSave = $("#prompt .input").val().trim();
+				if (!toSave || savedPrompts.includes(toSave)) return;
+
+				savedPrompts.unshift(toSave);
+				storeSavedPrompts();
+				loadSavedPrompts();
+				checkCurrentPromptSaved();
+			}
+			$("#prompt .save-btn").on("click", savePrompt);
+
+			$("#saved-prompts-btn").on("click", () => {
+				$("#prompt-container").toggleClass("show-saved");
+			});
+
+			$(document).on("click", e => {
+				if ($(e.target).closest("#prompt-container").length != 1) {
+					$("#prompt-container").removeClass("show-saved");
+				}
+			}).on("keydown", e => {
+				if (e.key == "Escape") {
+					$("#prompt-container").removeClass("show-saved");
+				}
+			});
+			$("#prompt .input").on("focus", () => {
+				$("#prompt-container").removeClass("show-saved");
+			});
+
+			// (G) Create button
+			let waiting = false;
+			function wait(setWaiting, waitMsg) {
+				waiting = setWaiting;
+				if (waiting) {
+					console.log(waitMsg);
+					$("#create-button").removeClass("clickable").text(waitMsg);
+				} else {
+					$("#create-button").text("Create");
+					updateCreateButton();
+				}
+			}
+
+			function updateCreateButton() {
+				if (waiting) return;
+
+				$("#create-button").removeClass("clickable");
+				if (
+					$("#prompt .input").val().trim().length > 0 && 
+					$(".art-style.selected").length == 1
+				) {
+					$("#create-button").addClass("clickable");
+				}
+			}
+			$(".art-style").on("click", updateCreateButton);
+			$("#prompt .input").on("input", updateCreateButton);
+			updateCreateButton();
+
+			// (C) Results grid
+			let [ resGridW, resGridH ] = JSON.parse(localStorage.getItem("gridSize")) || [1, 1];
+
+			function updateResGrid() {
+				$("#res-grid").css("grid",
+					`repeat(${resGridH}, 1fr) / repeat(${resGridW}, 1fr)`
+				).children().remove();
+				$("#res-grid-container, #res-grid").css("aspect-ratio",
+					`${resGridW} / ${resGridH}`
+				);
+				$("#res-grid").append(
+					$("#templates .res-img").clone().prop("outerHTML").repeat(resGridW * resGridH)
+				);
+			}
+			updateResGrid();
+			// $(".res-img").on("click", e => {
+			// 	playAnimation($(e.currentTarget), "slam");	
+			// });
+
+			$(".res-grid-size").on("click", e => {
+				let btn = $(e.target);
+				let a = btn.hasClass("inc") ? 1 : -1;
+				if (btn.hasClass("w")) {
+					resGridW = Math.min(Math.max(resGridW + a, 1), maxResGridSize);
+				} else if (btn.hasClass("h")) {
+					resGridH = Math.min(Math.max(resGridH + a, 1), maxResGridSize);
+				}
+				updateResGrid();
+
+				localStorage.setItem("gridSize", JSON.stringify([resGridW, resGridH]));
+			});
+
+			// (B) Auth token
+			const googleKey = "AIzaSyDCvp5MTJLUdtBYEKYWXJrlLzu1zuKM6Xw";
+
+			let authToken;
+
+			// Old
+			// async function refreshAuthToken(refreshToken) {
+			// 	let res = await fetch(`https://identitytoolkit.googleapis.com/v1/token?key=${googleKey}`, {
+			// 		method: "POST",
+			// 		body: JSON.stringify({grant_type: "refresh_token", refresh_token: refreshToken})
+			// 	});
+			// 	return await res.json();
+			// }
+
+			async function loadAuthToken() {
+				let loginData = JSON.parse(localStorage.getItem("login"));
+				if (
+					!loginData || Object.keys(loginData).length == 0 ||
+					Date.now() >= loginData.expireDate
+				) {
+					wait(true, "Logging in...");
+
+					let res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${googleKey}`, {
+						method: "POST",
+						body: JSON.stringify({returnSecureToken: true})
+					});
+
+					let {idToken, expiresIn} = await res.json();
+					let expireDate = Date.now() + expiresIn * 1000;
+					localStorage.setItem("login", JSON.stringify({authToken: idToken, expireDate}));
+					authToken = idToken;
+					
+					wait(false);
+				} else {
+					authToken = loginData.authToken;
+				}
+			}
+			loadAuthToken();
+
+			// (B) Generation
+			let genQueue = [];
+
+			async function startGeneration(index) {
+				let resImg = $(".res-img").eq(index);
+
+				let res = await fetch("http://64.226.88.255/https://paint.api.wombo.ai/api/v2/tasks", {
+					method: "POST",
+					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": "WEB-2.0.0"},
+					body: JSON.stringify({input_spec: {
+						prompt: $("#prompt .input").val().trim(),
+						style: selectedStyle,
+						aspect_ratio: "ratio_1"
+					}, is_premium: false})
+				});
+
+				let { id } = await res.json();
+				genQueue.push(id);
+
+				playAnimation(resImg, "slam");
+				resImg.addClass("generating");
+
+				let checkIntervalId = setInterval(async () => {
+					playAnimation(resImg, "shake");
+
+					let finished = await checkGeneration(id, resImg);
+					if (finished) {
+						clearInterval(checkIntervalId);
+
+						genQueue = genQueue.filter(q => q != id);
+						if (genQueue.length == 0) wait(false);
+					}
+				}, checkGenerationInterval);
+			}
+
+			async function checkGeneration(id, $resImg) {
+				let res = await fetch(`http://64.226.88.255/https://paint.api.wombo.ai/api/v2/tasks/${id}`, {
+					method: "GET",
+					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": "WEB-2.0.0"}
+				});
+
+				let resBody = await res.json();
+				if (resBody.state != "completed") return false;
+
+				let imageUrl = resBody.result.final;
+				$resImg.find("img").attr("src", imageUrl).on("load", () => {
+					$resImg.removeClass("generating");
+				});
+
+				return true;
+			}
+
+			$("#create-button").on("click", () => {
+				if (!$("#create-button").hasClass("clickable") || !authToken) return;
+
+				updateResGrid();
+				wait(true, "Generating...");
+				
+				let numGenerations = resGridW * resGridH;
+				for (let i = 0; i < numGenerations; i++) {
+					setTimeout(() => {
+						startGeneration(i);
+					}, i * startGenerationInterval);
+				}
+			});
+			// !SECTION
+		</script>
+	</body>
+</html>
