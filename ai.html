@@ -11,7 +11,7 @@
 			:root {
 				--bgr1: #1B1B1B;
 				--bgr2: #0E0E0E;
-				--dark: #131313;
+				--dark: #121212;
 				--ui1: #323232;
 				--ui2: #888888;
 				--ui3: #5B5B5B;
@@ -27,14 +27,17 @@
 			}
 			body {
 				height: 100%;
-				margin: 0;
+				width: 100%;
+				max-width: 170vh;
+				margin: auto;
+
 				background: radial-gradient(circle farthest-corner, var(--bgr1), var(--bgr1) 85%, var(--bgr2));
 
 				display: flex;
 				justify-content: center;
 			}
 			body > section {
-				padding: 2rem 2rem;
+				padding: 4rem 2rem;
 				height: 100%;
 				box-sizing: border-box;
 			}
@@ -83,15 +86,31 @@
 			}
 
 			/* (O) General element styles */
-			p {
-				font-size: 0.9rem;
-				font-weight: 400;
-				color: var(--ui2);
-			}
 			h1 {
 				font-size: 1.5rem;
 				font-weight: 600;
 				text-shadow: 0 0 10px black;
+				text-align: center;
+				margin-bottom: 1rem !important;
+				& > * {
+					display: inline-block;
+				}
+			}
+			h2 {
+				font-size: 0.95rem;
+				font-weight: 500;
+				margin-bottom: 0.6rem !important;
+				& > * {
+					display: inline-block;
+				}
+			}
+			span {
+				font-size: 0.9rem;
+				font-weight: 400;
+				color: white;
+			}
+			br {
+				margin-bottom: 1rem !important;
 			}
 			hr {
 				margin: 0;
@@ -100,19 +119,56 @@
 				border: none;
 				background-color: var(--dark);
 			}
-			br {
-				line-height: 3;
-			}
 
-			.clickable:not(:has(.clickable-overlay:hover)):hover {
-				background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
-				cursor: pointer;
-			}
-			.clickable:not(:has(.clickable-overlay:hover)):active {
-				background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
-			}
 			i {
 				pointer-events: none;
+			}
+
+			/* (O) Clickable classes */
+			._clickable:not(:has(._clickable-overlay:hover)):hover {
+				background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+				&._brighten { background-image: linear-gradient(rgb(255 255 255/3%) 0 0); }
+
+				cursor: pointer;
+				* { cursor: pointer; }
+			}
+			._clickable._hover { /* Defining this seperately because of a glitch (I think) */
+				background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
+				&._brighten { background-image: linear-gradient(rgb(255 255 255/5%) 0 0); }
+			}
+			._clickable:not(:has(._clickable-overlay:hover)):active {
+				background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
+				&._brighten { background-image: linear-gradient(rgb(255 255 255/6%) 0 0); }
+			}
+
+			._clickable_filter:not(:has(._clickable-overlay:hover)):hover {
+				filter: brightness(90%);
+				&._brighten { filter: brightness(125%); }
+
+				cursor: pointer;
+				* { cursor: pointer; }
+			}
+			._clickable_filter._hover { /* Defining this seperately because of a glitch (I think) */
+				filter: brightness(90%);
+				&._brighten { filter: brightness(125%); }
+			}
+			._clickable_filter:not(:has(._clickable-overlay:hover)):active {
+				filter: brightness(80%);
+				&._brighten { filter: brightness(150%); }
+			}
+
+			._clickable_pop {
+				--pop-scale: 105%;
+				transition: scale 0.1s ease-out;
+			}
+			._clickable_pop:not(:has(._clickable-overlay:hover)):hover {
+				scale: var(--pop-scale);
+
+				cursor: pointer;
+				* { cursor: pointer; }
+			}
+			._clickable_pop._hover { /* Defining this seperately because of a glitch (I think) */
+				scale: var(--pop-scale);
 			}
 
 			/* (Y) Art style select */
@@ -145,7 +201,7 @@
 				place-items: stretch center;
 
 				overflow-y: auto;
-				scrollbar-width: none
+				scrollbar-width: none;
 			}
 			.inset-shadow {
 				position: absolute;
@@ -166,8 +222,8 @@
 			}
 
 			.art-style {
-				margin: 0;
-				padding: 0.5rem 1rem;
+				margin: 0.25rem 0.5rem;
+				padding: 0.25rem 0.5rem;
 
 				display: flex;
 				flex-direction: column;
@@ -179,10 +235,6 @@
 			.art-style img {
 				height: 5.5rem;
 				border-radius: 0.6rem;
-
-				.art-style:hover & { transform: scale(105%); }
-				transition: transform 0.1s ease-out;
-
 				border: 3px solid transparent;
 				.art-style.selected & { border: 3px solid #5D4BEF; }
 			} 
@@ -192,20 +244,33 @@
 				text-align: center;
 			}
 
-			/* (G) Prompt select - input */
+			/* (G) Prompt select */
+			#prompt-select {
+				display: flex;
+				flex-direction: column;
+
+				overflow-y: auto;
+				scrollbar-width: none;
+			}
 			#prompt-select * {
 				box-sizing: border-box;
 				outline: none;
 				margin: 0;
 			}
-			#prompt-select > h1 {
-				text-align: center;
-				margin-bottom: 1rem;
-			}
 			#prompt-select > * {
-				margin-bottom: 0.4rem;
+				& > * {
+					margin-bottom: 0.4rem;
+				}
+			}
+			#prompt-select .optional-info {
+				margin: 0;
+				color: var(--ui4);
+				font-size: 1rem;
+				font-weight: 400;
+				text-shadow: 0 0 5px black;
 			}
 
+			/* (G) Prompt select - input */
 			#prompt-container {
 				height: 3rem;
 				margin-left: -0.25rem;
@@ -223,13 +288,16 @@
 				.close-icon { display: none; }
 				i { color: var(--ui2); }
 			}
+			#prompt-charcount {
+				&, .value { color: var(--ui2); }
+			}
 
 			#prompt > *, #saved-prompts-btn	 {
 				background-color: var(--ui1);
 				border: none;
 				border-radius: 1rem;
 			}
-			#prompt .input, #prompt .saved > * {
+			#prompt input, #prompt .saved > * {
 				height: 3rem;
 				line-height: 3rem;
 				font-size: 0.9rem;
@@ -241,7 +309,7 @@
 				color: #ffffff;
 			}
 
-			#prompt .input {
+			#prompt input {
 				width: 100%;
 				z-index: 3;
 
@@ -265,14 +333,13 @@
 			}
 			#prompt .saved > * {
 				height: 3rem;
-				color: var(--ui4);
 				background-color: #00000024;
 
 				position: relative;
 				&:first-child {
 					box-shadow: inset 0 10px 5px -5px #00000010;
 				}
-				&:not(:first-child)::before {
+				&:nth-child(n + 2 of .saved-prompt)::before {
 					content: "";
 					position: absolute;
 					top: 0;
@@ -288,6 +355,8 @@
 					white-space: nowrap;
 					overflow: hidden;
 					text-overflow: ellipsis;
+					
+					color: var(--ui4);
 				}
 			}
 			#prompt .saved .empty-info {
@@ -298,11 +367,11 @@
 			}
 
 			#prompt-container.show-saved {
-				.input {
+				input {
 					border-bottom-left-radius: 0;
 					border-bottom-right-radius: 0;
 				}
-				.saved {
+				#prompt .saved {
 					display: block;
 				}
 				#saved-prompts-btn .close-icon {
@@ -325,11 +394,7 @@
 				font-size: 0.95rem;
 				color: var(--ui2);
 
-				&:hover {
-					transform: scale(120%);
-					cursor: pointer;
-				}
-				transition: transform 0.1s ease-out;
+				--pop-scale: 120%;
 			}
 			#prompt .save-btn {
 				border-radius: 0;
@@ -351,6 +416,254 @@
 			}
 
 			/* (G) Prompt select - image */
+			#prompt-image-container {
+				position: relative;
+				flex: 0 0 8rem;
+
+				display: flex;
+				flex-direction: column;
+
+				&.img-selected {
+					flex-grow: 1;
+				}
+				transition: flex-grow 0.75s ease-in-out;
+			}
+			
+			#prompt-image-select {
+				position: absolute;
+				top: 0;
+				width: 100%;
+				height: 8rem;
+				padding: 0.5rem;
+				
+				border: 2px dashed var(--ui2);
+				border-radius: 1rem;
+				overflow: hidden;
+
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				#prompt-image-container.img-loading & {
+					pointer-events: none;
+				}
+				#prompt-image-container.img-selected & {
+					opacity: 0;
+					pointer-events: none;
+				}
+				transition: opacity 0.25s ease-in;
+			}
+			#prompt-image-select span { 
+				font-size: 0.9rem;
+				text-align: center;
+
+				#prompt-image-container.img-loading &.upload { display: none; }
+				&.loading { display: none; }
+				#prompt-image-container.img-loading &.loading { display: initial; }
+			}
+			#prompt-image-select input {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+				font-size: 0px;
+
+				&::file-selector-button {
+					display: none;
+				}
+			}
+
+			#prompt-image {
+				width: 100%;
+				flex: 1 0 8rem;
+				
+				background-color: var(--ui1);
+				border: 2px solid var(--ui3);
+				border-radius: 1rem;
+				overflow: hidden;
+
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+
+				opacity: 0;
+				pointer-events: none;
+				#prompt-image-container.img-selected & {
+					opacity: 1;
+					pointer-events: all;
+				}
+				transition: opacity 0.25s ease-out;
+			}
+			#prompt-image button {
+				position: absolute;
+				z-index: 1;
+				width: 3rem;
+				height: 3rem;
+				top: 0;
+
+				color: white;
+				text-shadow: 0 0 6px #000000b0;
+				background: 0;
+				border: 0;
+				border-radius: 1rem;
+
+				font-size: 1rem;
+				--pop-scale: 120%;
+
+				&.remove-btn {
+					font-size: 120%;
+					left: 0;
+				}
+				&.save-btn {
+					right: 0;
+				}
+				#prompt-image:not(.current-saved) &.save-btn {
+					filter: brightness(80%);
+				}
+			}
+			#prompt-image .preview-container {
+				position: relative;
+				overflow: hidden;
+				&, .preview {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
+				}
+			}
+			#prompt-image .preview {
+				position: relative;
+				background-size: auto 100%;
+				img { 
+					flex: 1 0 0;
+					min-height: 0;
+					backdrop-filter: blur(6px) brightness(60%);
+					object-fit: contain;
+				}
+			}
+
+			#prompt-image .weight {
+				padding: 1.25rem 1rem;
+				padding-bottom: 1.5rem;
+
+				display: flex;
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+			#prompt-image .weight h2 {
+				color: var(--ui4);
+				font-size: 0.9rem;
+				font-weight: 400;
+			}
+			#prompt-image .weight .value {
+				color: white;
+				font-size: 0.9rem;
+				font-weight: 500;
+			}
+			#prompt-image .weight input {
+				appearance: none;
+				transform: scaleX(1.05); /* Magic happening here */
+				height: 0.25rem;
+
+				--progress: 50%;
+				background: none;
+
+				&::-webkit-slider-runnable-track, &::-moz-range-track {
+					height: 0.25rem;
+					border-radius: 0.125rem;
+					background: linear-gradient(to right, var(--ui4) var(--progress), var(--ui2) var(--progress));
+					width: calc(100% / 1.05);
+				}
+
+				&::-webkit-slider-thumb, &::-moz-range-thumb {
+					appearance: none;
+					width: calc(1rem / 1.05);
+					height: 1rem;
+					border: 0.4rem solid transparent;
+					border-left-width: calc(0.4rem / 1.05);
+					border-right-width: calc(0.4rem / 1.05);
+					background-clip: padding-box;
+
+					background-color: var(--ui4);
+					border-radius: 50%;
+				}
+				&::-moz-range-thumb:hover {
+					background-image: linear-gradient(rgb(255 255 255/50%) 0 0);
+					cursor: pointer;
+				}
+				&.dragging::-moz-range-thumb {
+					background-image: linear-gradient(rgb(255 255 255/100%) 0 0);
+				}
+			}
+
+			#saved-and-recent-images {
+				overflow: hidden;
+				max-height: 20rem;
+				#prompt-image-container.img-selected & {
+					max-height: 0;
+				}
+				transition: max-height 0.5s ease-in;
+			}
+
+			/* (G) Prompt select - quick images */
+			div:has(> .img-roller) {
+				container-type: size;
+				height: 5rem;
+			}
+			@container (width > 0) { /* A dirty trick */
+				.img-roller {
+					height: 100cqw;
+				}
+			}
+			.img-roller {
+				width: 5rem;
+				transform: rotate(-90deg);
+				transform-origin: 2.5rem 2.5rem;
+
+				display: flex;
+				flex-direction: column;
+				flex-wrap: nowrap;
+				gap: 0.5rem;
+				align-items: stretch;
+
+				overflow-y: auto;
+				scrollbar-width: none;
+			}
+			.img-roller > * {
+				width: 100%;
+				aspect-ratio: 1;
+				flex-shrink: 0;
+				transform: rotate(90deg);
+
+				border: 2px solid var(--ui2);
+				border-radius: 0.5rem;
+
+				scale: 95%;
+				--pop-scale: 100%;
+			}
+			
+			.quick-img {
+				position: relative;
+				overflow: hidden;
+				img {
+					width: 100%;
+					object-fit: cover;
+				}
+			}
+			.quick-img .delete-btn {
+				position: absolute;
+				width: 2rem;
+				height: 2rem;
+				top: 0;
+				right: 0;
+
+				color: white;
+				text-shadow: 0 0 5px #00000080;
+				background: none;
+				border: none;
+				border-radius: 0.5rem;
+
+				--pop-scale: 120%;
+			}
 
 			/* (G) Prompt select - create */
 			div:has(> #create-button) {
@@ -371,7 +684,7 @@
 				color: var(--dark);
 
 				background-color: var(--ui2);
-				&.clickable {
+				&._clickable {
 					background-color: #ffffff;
 				}
 			}
@@ -390,24 +703,35 @@
 				color: var(--dark);
 				font-weight: 800;
 				border: none;
+
 				--w: 2.25rem;
 				--h: 1.75rem;
 				--r1: 0.8rem;
 				--r2: 0.4rem;
-			}
-			.res-grid-size.w { 
-				width: var(--w);
-				height: var(--h);
-				border-radius: var(--r1) var(--r2) var(--r2) var(--r1);
-				grid-row: 1;
-				align-self: start;
-			}
-			.res-grid-size.h { 
-				width: var(--h);
-				height: var(--w);
-				border-radius: var(--r1) var(--r1) var(--r2) var(--r2);
-				grid-column: 3;
-				justify-self: end;
+
+				&.w {
+					width: var(--w);
+					height: var(--h);
+					border-radius: var(--r1) var(--r2) var(--r2) var(--r1);
+					grid-row: 1;
+					align-self: start;
+
+					grid-column: 1; justify-self: end;
+					&.inc { grid-column: 2; justify-self: start; }
+				}
+				&.h {
+					width: var(--h);
+					height: var(--w);
+					border-radius: var(--r1) var(--r1) var(--r2) var(--r2);
+					grid-column: 3;
+					justify-self: end;
+
+					grid-row: 2; align-self: end;
+					&.inc { grid-row: 3; align-self: start; }
+				}
+				&.inc {
+					transform: rotate(180deg);
+				}
 			}
 
 			#res-grid-container {
@@ -439,7 +763,7 @@
 				background: linear-gradient(16deg, rgba(186,155,223,1) 0%, rgba(199,102,170,1) 45%, rgba(199,102,170,1) 55%, rgba(228,128,140,1) 100%); 
 				border-radius: 10px;
 
-				transition: filter 0.45s linear;
+				transition: filter 0.4s ease-out;
 
 				& img {
 					width: 100%;
@@ -455,13 +779,17 @@
 					opacity: 0;
 				}
 			}
+			.res-img.errored {
+				transition: filter 0.01s linear 0.5s;
+				filter: hue-rotate(60deg);
+			}
 			/* !SECTION */
 		</style>
 	</head>
 	<body>
 		<!-- SECTION HTML -->
 		<!-- (Y) Art style select -->
-		<section id="art-style-select" style="width: 25%;">
+		<section id="art-style-select" style="width: 30%;">
 			<h1>Choose art style</h1>
 			<div id="art-styles-container">
 				<div class="inset-shadow top"></div>
@@ -471,41 +799,70 @@
 		</section><hr>
 		
 		<!-- (G) Prompt select -->
-		<section id="prompt-select" style="width: 25%;">
+		<section id="prompt-select" style="width: 30%;">
 			<h1>Enter prompt</h1>
-			<div id="prompt-container">
-				<div id="prompt">
-					<input class="input" type="text" placeholder="A beautiful landscape...">
-					<button class="side-btn save-btn">
+			<div>
+				<div id="prompt-container">
+					<div id="prompt">
+						<input type="text" placeholder="A beautiful landscape...">
+						<button class="side-btn save-btn _clickable_pop">
+							<i class="fa-solid fa-bookmark"></i>
+						</button>
+						<li class="saved"><ul class="empty-info">You have no saved prompts</ul></li>
+					</div>
+					<button id="saved-prompts-btn"class="_clickable">
+						<i class="fa-solid fa-angle-down open-icon"></i>
+						<i class="fa-solid fa-angle-up close-icon"></i>
+					</button>
+				</div>
+				<span id="prompt-charcount"><span class="value">0</span>/320 characters</span>
+			</div>
+			<br><br>
+			<h1>Select input image&nbsp;<span class="optional-info">(optional)</span></h1>
+			<div id="prompt-image-container">
+				<div id="prompt-image-select" class="_clickable _brighten">
+					<span class="upload"><b>Upload image</b> or drag an image here</span>
+					<span class="loading">Uploading image...</span>
+					<input type="file" accept="image/*,.png,.jpg,.jpeg,.heic,.heif">
+				</div>
+				<div id="prompt-image">
+					<button class="remove-btn _clickable_pop">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+					<button class="save-btn _clickable_pop">
 						<i class="fa-solid fa-bookmark"></i>
 					</button>
-					<li class="saved"><ul class="empty-info">You have no saved prompts</ul></li>
+					<div class="preview-container"><div class="preview"><img/></div></div>
+					<div class="weight">
+						<h2>Adjust image weight: <span class="value">50%</span></h2>
+						<input type="range" min="1" max="100" value="50" step="1">
+					</div>
 				</div>
-				<button class="clickable" id="saved-prompts-btn">
-					<i class="fa-solid fa-angle-down open-icon"></i>
-					<i class="fa-solid fa-angle-up close-icon"></i>
-				</button>
+				<br>
+				<div id="saved-and-recent-images">
+					<h2>Saved images</h2>
+					<div><div id="saved-images" class="img-roller"></div></div>
+					<br>
+					<h2>Recent uploads</h2>
+					<div><div id="recent-images" class="img-roller"></div></div>
+				</div>
 			</div>
-			<p><span id="prompt-charcount">0</span>/320 characters</p>
-			<br>
-			<h1>Select input image</h1>
-			<p>Coming soon...</p>
 			<br><br>
 			<div><button id="create-button">Create</button></div>
 		</section><hr>
 
 		<!-- (C) Results -->
-		<section id="results" style="width: 30%;">
-			<button class="clickable res-grid-size dec w" style="grid-column: 1; justify-self: end;">
+		<section id="results" style="width: 40%;">
+			<button class="_clickable res-grid-size dec w">
 				<i class="fa-solid fa-minus"></i>
 			</button>
-			<button class="clickable res-grid-size inc w" style="grid-column: 2; justify-self: start; transform: rotate(180deg);">
+			<button class="_clickable res-grid-size inc w">
 				<i class="fa-solid fa-plus"></i>
 			</button>
-			<button class="clickable res-grid-size dec h" style="grid-row: 2; align-self: end;">
+			<button class="_clickable res-grid-size dec h">
 				<i class="fa-solid fa-minus"></i>
 			</button>
-			<button class="clickable res-grid-size inc h" style="grid-row: 3; align-self: start; transform: rotate(180deg);">
+			<button class="_clickable res-grid-size inc h">
 				<i class="fa-solid fa-plus"></i>
 			</button>
 
@@ -514,22 +871,77 @@
 
 		<!-- (_) Templates -->
 		<div id="templates" style="display: none;">
-			<ul class="saved-prompt clickable">
+			<ul class="saved-prompt _clickable">
 				<span class="text"></span>
-				<button class="clickable-overlay side-btn delete-btn">
+				<button class="side-btn delete-btn _clickable-overlay _clickable_pop">
 					<i class="fa-solid fa-trash"></i>
 				</button>
 			</ul>
 			<figure class="art-style">
-				<img><figcaption></figcaption>
+				<img class="_clickable_pop"/><figcaption></figcaption>
 			</figure>
-			<div class="res-img"><img src="blank.png"></div>
+			<div class="quick-img saved-img _clickable_pop">
+				<img/>
+				<button class="delete-btn _clickable_pop">
+					<i class="fa-solid fa-trash"></i>
+				</button>
+			</div>
+			<div class="quick-img recent-img _clickable_pop"><img/></div>
+			<div class="res-img"><img src="blank.png"/></div>
 		</div>
 		<!-- !SECTION -->
 
 		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 		<script>
 			// SECTION JS
+			// (R) Functions
+			function map(x, a1, b1, a2, b2) {
+				return (x - a1) / (b1 - a1) * (b2 - a2) + a2;
+			}
+
+			function getStoredArray(name) {
+				return JSON.parse(localStorage.getItem(name)) || [];
+			}
+
+			function storeArray(name, value) {
+				localStorage.setItem(name, JSON.stringify(value));
+			}
+
+			function createFormData(object) {
+				let formData = new FormData();
+				for (let [ key, value ] of Object.entries(object)) {
+					formData.set(key, value);
+				}
+				return formData;
+			}
+
+			function setInputFiles($inputEl, files) {
+				let dataTransfer = new DataTransfer();
+				for (let file of files) {
+					dataTransfer.items.add(file);
+				}
+				$inputEl[0].files = dataTransfer.files;
+			}
+
+			function corsProxy(url) {
+				// return `http://localhost:4000/?url=${url}`;
+				return `https://www.htgnyt.dk/cors?url=${url}`;
+			}
+
+			function getFileBase64(file) {
+				let fileReader = new FileReader();
+				fileReader.readAsDataURL(file);
+				return new Promise(res => {
+					fileReader.addEventListener("load", () => {
+						res(fileReader.result.match(/base64,(.+)/)[1]);
+					});
+				});
+			}
+
+			function loadImage($img) {
+				return new Promise(res => $img.one("load", res));
+			}
+
 			// (R) Constants
 			const styles = [
 				{name: "dreamland", id: 115}, {name: "graffiti", id: 148},
@@ -543,12 +955,20 @@
 				{name: "hdr", id: 130}, {name: "sketch", id: 129},
 				{name: "cartoonist", id: 128}, {name: "anime", id: 126},
 				{name: "ink", id: 122}, {name: "whimsical", id: 124},
-				{name: "festive", id: 125}, {name: "dark fantasy", id: 121},
-				{name: "horror", id: 123}, {name: "baroque", id: 120},
-				{name: "monster", id: 119}, {name: "figure", id: 118},
+				{name: "comic", id: 127}, {name: "festive", id: 125},
+				{name: "dark fantasy", id: 121}, {name: "horror", id: 123},
+				{name: "baroque", id: 120}, {name: "monster", id: 119},
+				{name: "figure", id: 118},
 			];
-			const maxResGridSize = 3;
-			const startGenerationInterval = 200;
+			const maxResGridSize = 2;
+
+			// Don't care that this is public
+			const imgbbAPIKey = "27d1165cbf3982f13678919e7f7a625f";
+			
+			const googleAuthKey = "AIzaSyDCvp5MTJLUdtBYEKYWXJrlLzu1zuKM6Xw";
+			const appVersionHeader = "iOS-5.0.2";
+
+			const startGenerationInterval = 100;
 			const checkGenerationInterval = 2000;
 
 			// (O) Animations
@@ -587,10 +1007,6 @@
 			}
 
 			// (O) UI
-			$("#prompt .input").on("input", () => {
-				$("#prompt-charcount").text($("#prompt .input").val().length);
-			}).trigger("input");
-
 			$("#art-styles").on("scroll", () => {
 				let { offsetHeight, scrollHeight, scrollTop} = $("#art-styles")[0];
 				let bottomScrollTop = scrollHeight - offsetHeight;
@@ -602,6 +1018,64 @@
 					$("#art-styles-container .inset-shadow.bottom").css("opacity", 0);
 				}
 			}).trigger("scroll");
+			
+			$("#art-styles").on("mouseover", e => {
+				let artStyleEl = $(e.target).closest(".art-style");
+				if (artStyleEl.length == 1) artStyleEl.find("img").addClass("_hover");
+			}).on("mouseout", e => {
+				let artStyleEl = $(e.target).closest(".art-style");
+				if (artStyleEl.length == 1) artStyleEl.find("img").removeClass("_hover");
+			});
+
+			$("#prompt input").on("input", () => {
+				$("#prompt-charcount .value").text($("#prompt input").val().length);
+			}).trigger("input");
+
+			$("#prompt-image-select input").on("dragenter", () => {
+				$("#prompt-image-select").addClass("_hover");
+			}).on("dragleave", () => {
+				$("#prompt-image-select").removeClass("_hover");
+			});
+
+			let previewImg = $("#prompt-image .preview img")[0];
+			let imgResizeObserver = new ResizeObserver(entries => {
+				let previewImgAR = previewImg.naturalHeight / previewImg.naturalWidth;
+				if (!previewImgAR) return;
+
+				let previewArea = $("#prompt-image .preview");
+				let previewAreaW = previewArea.width(), previewAreaH = previewArea.height();
+				let previewAreaAR = previewAreaH / previewAreaW;
+
+				let xPos = 0, yPos = 0;
+				if (previewAreaAR < previewImgAR) {
+					let previewImgActualWidth = previewArea.height() / previewImgAR;
+					xPos = (previewAreaW - previewImgActualWidth) / 2;
+				} else if (previewAreaAR > previewImgAR) {
+					let previewImgActualHeight = previewArea.width() * previewImgAR;
+					yPos = (previewAreaH - previewImgActualHeight) / 2;
+				}
+				previewArea.css("background-position", `${xPos}px ${yPos}px`);
+			});
+			imgResizeObserver.observe(previewImg);
+
+			let promptWeightInput = $("#prompt-image .weight input");
+			promptWeightInput.on("mousedown", () => {
+				promptWeightInput.addClass("dragging");
+			}).on("mouseup", () => {
+				promptWeightInput.removeClass("dragging");
+			}).on("input", e => {
+				let promptWeight = promptWeightInput.val();
+				promptWeightInput.css("--progress", `${promptWeight}%`);
+				$("#prompt-image .weight .value").text(`${promptWeight}%`);
+
+				let blurPreviewImg = map(promptWeight, 1, 100, 2.5, 0.1);
+				$("#prompt-image .preview").css("filter", `blur(${blurPreviewImg}vh)`);
+			}).trigger("input");
+
+			// Testing
+			// $(document).on("keypress", e => {
+			// 	uif (e.key == "i") $("#prompt-image-container").toggleClass("img-selected");
+			// });
 
 			// (Y) Art styles
 			let selectedStyle = parseInt(localStorage.getItem("selectedStyle")) || 115;
@@ -635,10 +1109,10 @@
 			selectStyle(selectedStyle);
 
 			// (G) Saved Prompts
-			let savedPrompts = JSON.parse(localStorage.getItem("savedPrompts")) || [];
+			let savedPrompts = getStoredArray("savedPrompts");
 
 			function selectSavedPrompt(e) {
-				$("#prompt .input").val($(e.currentTarget).find(".text").text()).trigger("input");
+				$("#prompt input").val($(e.currentTarget).find(".text").text()).trigger("input");
 				$("#prompt-container").toggleClass("show-saved");
 				checkCurrentPromptSaved();
 			}
@@ -650,7 +1124,7 @@
 				savedPrompts.splice(promptEl.index() - 1, 1);
 				promptEl.remove();
 				checkCurrentPromptSaved();
-				storeSavedPrompts();
+				storeArray("savedPrompts", savedPrompts);
 			}
 
 			function loadSavedPrompts() {
@@ -665,12 +1139,8 @@
 			}
 			loadSavedPrompts();
 
-			function storeSavedPrompts() {
-				localStorage.setItem("savedPrompts", JSON.stringify(savedPrompts));
-			}
-
 			function checkCurrentPromptSaved() {
-				let val = $("#prompt .input").val();
+				let val = $("#prompt input").val();
 				if (savedPrompts.includes(val)) {
 					$("#prompt-container").addClass("current-saved");
 				} else {
@@ -678,14 +1148,20 @@
 				}
 			}
 			checkCurrentPromptSaved();
-			$("#prompt .input").on("input", checkCurrentPromptSaved);
+			$("#prompt input").on("input", checkCurrentPromptSaved);
 
 			function savePrompt() {
-				let toSave = $("#prompt .input").val().trim();
-				if (!toSave || savedPrompts.includes(toSave)) return;
+				let toSave = $("#prompt input").val().trim();
+				if (!toSave) return;
 
-				savedPrompts.unshift(toSave);
-				storeSavedPrompts();
+				let alreadySavedIndex = savedPrompts.indexOf(toSave);
+				if (alreadySavedIndex >= 0) {
+					savedPrompts.splice(alreadySavedIndex, 1);
+				} else {
+					savedPrompts.unshift(toSave);
+				}
+
+				storeArray("savedPrompts", savedPrompts);
 				loadSavedPrompts();
 				checkCurrentPromptSaved();
 			}
@@ -704,9 +1180,92 @@
 					$("#prompt-container").removeClass("show-saved");
 				}
 			});
-			$("#prompt .input").on("focus", () => {
+			$("#prompt input").on("focus", () => {
 				$("#prompt-container").removeClass("show-saved");
 			});
+
+			// (G) Quick images
+			let savedImages = getStoredArray("savedImages");
+			let recentImages = getStoredArray("recentImages");
+
+			function loadQuickImage(imgData, template) {
+				let el = $("#templates").find(template).clone();
+				el.find("img").attr("src", imgData.urlSmall);
+				el.attr("data-url", imgData.urlFull);
+				el.find(".delete-btn").on("click", deleteSavedImage);
+				el.on("click", selectQuickImage);
+				return el;
+			}
+			$("#saved-images").append(savedImages.map(i => loadQuickImage(i, ".saved-img")));
+			$("#recent-images").append(recentImages.map(i => loadQuickImage(i, ".recent-img")));
+
+			async function selectQuickImage(e) {
+				let el = $(e.currentTarget);
+				let imgUrl = el.attr("data-url")
+
+				let imgRes = await fetch(imgUrl);
+				let imgResBlob = await imgRes.blob();
+				
+				let imgExt = imgUrl.match(/[^\.]+$/)[0];
+				let imgFile = new File([imgResBlob], `image.${imgExt}`);
+				setInputFiles($("#prompt-image-select input"), [imgFile]);
+				$("#prompt-image-select input").trigger("input", [true]);
+			}
+
+			async function addRecentImage(imgBase64) {
+				let uploadRes = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, {
+					method: "POST", body: createFormData({image: imgBase64})
+				});
+				let { data: imgUploadData } = await uploadRes.json();
+
+				let imgData = {
+					urlSmall: imgUploadData.thumb.url,
+					urlFull: imgUploadData.image.url
+				};
+				recentImages.unshift(imgData);
+				$("#recent-images").prepend(loadQuickImage(imgData, ".recent-img"));
+				
+				storeArray("recentImages", recentImages)
+
+			}
+
+			function saveImage() {
+				let { urlSmall, urlFull } = recentImages[recentImages.length - 1];
+
+				let alreadySavedIndex = savedImages.findIndex(i => i.urlFull == urlFull);
+				if (alreadySavedIndex >= 0) {
+					savedImages.splice(alreadySavedIndex, 1);
+					$(".saved-img").filter((_, e) => $(e).attr("data-url") == urlFull).remove();
+				} else {
+					let imgData = {urlSmall, urlFull};
+					savedImages.unshift(imgData);
+					$("#saved-images").prepend(loadQuickImage(imgData, ".saved-img"));
+				}
+
+				storeArray("savedImages", savedImages);
+				checkCurrentImageSaved();
+			}
+			$("#prompt-image .save-btn").on("click", saveImage);
+
+			function deleteSavedImage(e) {
+				e.stopPropagation();
+
+				let imgEl = $(e.currentTarget).closest(".saved-img");
+				let urlFull = imgEl.attr("data-url");
+
+				let index = savedImages.findIndex(i => i.urlFull == urlFull);
+				savedImages.splice(index, 1);
+				$(".saved-img").filter((_, e) => $(e).attr("data-url") == urlFull).remove();
+			}
+
+			function checkCurrentImageSaved() {
+				let { urlSmall, urlFull } = recentImages[recentImages.length - 1];
+				if (savedImages.find(i => i.urlFull == urlFull)) {
+					$("#prompt-image").addClass("current-saved");
+				} else {
+					$("#prompt-image").removeClass("current-saved");
+				}
+			}
 
 			// (G) Create button
 			let waiting = false;
@@ -714,7 +1273,7 @@
 				waiting = setWaiting;
 				if (waiting) {
 					console.log(waitMsg);
-					$("#create-button").removeClass("clickable").text(waitMsg);
+					$("#create-button").removeClass("_clickable").text(waitMsg);
 				} else {
 					$("#create-button").text("Create");
 					updateCreateButton();
@@ -724,16 +1283,16 @@
 			function updateCreateButton() {
 				if (waiting) return;
 
-				$("#create-button").removeClass("clickable");
+				$("#create-button").removeClass("_clickable");
 				if (
-					$("#prompt .input").val().trim().length > 0 && 
+					$("#prompt input").val().trim().length > 0 && 
 					$(".art-style.selected").length == 1
 				) {
-					$("#create-button").addClass("clickable");
+					$("#create-button").addClass("_clickable");
 				}
 			}
 			$(".art-style").on("click", updateCreateButton);
-			$("#prompt .input").on("input", updateCreateButton);
+			$("#prompt input").on("input", updateCreateButton);
 			updateCreateButton();
 
 			// (C) Results grid
@@ -769,8 +1328,6 @@
 			});
 
 			// (B) Auth token
-			const googleKey = "AIzaSyDCvp5MTJLUdtBYEKYWXJrlLzu1zuKM6Xw";
-
 			let authToken;
 
 			// Old
@@ -783,14 +1340,14 @@
 			// }
 
 			async function loadAuthToken() {
-				let loginData = JSON.parse(localStorage.getItem("login"));
+ 				let loginData = JSON.parse(localStorage.getItem("login"));
 				if (
 					!loginData || Object.keys(loginData).length == 0 ||
 					Date.now() >= loginData.expireDate
 				) {
 					wait(true, "Logging in...");
 
-					let res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${googleKey}`, {
+					let res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${googleAuthKey}`, {
 						method: "POST",
 						body: JSON.stringify({returnSecureToken: true})
 					});
@@ -805,33 +1362,99 @@
 					authToken = loginData.authToken;
 				}
 			}
-			loadAuthToken();
+			if (!authToken) loadAuthToken();
+
+			// (B) Image selection
+			let mediastores = [];
+
+			async function uploadImage(base64, fileExt) {
+				let mediastoreRes = await fetch(corsProxy("https://dream.ai/api/mediastore"), {
+					method: "POST",
+					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": appVersionHeader},
+					body: JSON.stringify({
+						image: base64,
+						media_suffix: fileExt,
+						num_uploads: 1
+					})
+				});
+				let mediastore = (await mediastoreRes.json()).mediastore_uid;
+				mediastores.push(mediastore);
+			}
+
+			$("#prompt-image-select input").on("input", async (e, restore) => {
+				wait(true, "Adding input image...");
+
+				let file = $("#prompt-image-select input")[0].files[0];
+				let objectUrl = URL.createObjectURL(file);
+
+				$("#prompt-image .preview").css("background-image", `url(${objectUrl})`);
+				$("#prompt-image .preview img").attr("src", objectUrl)
+				await loadImage($("#prompt-image .preview img"))
+
+				$("#prompt-image-select").removeClass("hover");
+				playAnimation($("#prompt-image-select"), "slam");
+				setTimeout(() => {
+					if (!$("#prompt-image-container").hasClass("img-selected")) {
+						$("#prompt-image-container").addClass("img-loading");
+					}
+				}, 500);
+
+				let fileBase64 = await getFileBase64(file);
+				let fileExt = file.name.match(/[^\.]+$/)[0];
+
+				let numMediastores = maxResGridSize * maxResGridSize;
+				let uploadImagePromises = []
+				for (let i = 0; i < numMediastores; i++) {
+					uploadImagePromises[i] = uploadImage(fileBase64, fileExt);
+				}
+				await Promise.all(uploadImagePromises);
+				console.log(mediastores);
+
+				if (!restore) await addRecentImage(fileBase64);
+
+				$("#prompt-image-container").removeClass("img-loading");
+				$("#prompt-image-container").addClass("img-selected");
+				checkCurrentImageSaved();
+
+				wait(false);
+			});
+
+			$("#prompt-image .remove-btn").on("click", () => {
+				$("#prompt-image-container").removeClass("img-selected");
+				mediastores = [];
+			});
 
 			// (B) Generation
 			let genQueue = [];
-
-			function corsProxy(url) {
-				return `https://www.htgnyt.dk/cors?url=${url}`;
-			}
 
 			async function startGeneration(index) {
 				let resImg = $(".res-img").eq(index);
 
 				let res = await fetch(corsProxy("https://paint.api.wombo.ai/api/v2/tasks"), {
-					method: "POST",
-					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": "WEB-2.0.0"},
+					method: "POST", referrer: "",
+					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": appVersionHeader},
 					body: JSON.stringify({input_spec: {
-						prompt: $("#prompt .input").val().trim(),
+						prompt: $("#prompt input").val().trim(),
 						style: selectedStyle,
-						aspect_ratio: "ratio_1"
+						aspect_ratio: "ratio_1",
+						input_image: mediastores.length == 0 ? null : { 
+							mediastore_id: mediastores[index], 
+							weight: $("#prompt-image .weight input").val() / 100
+						},
+						gen_type: "NORMAL" // I'm not sure if this settings does any difference
 					}, is_premium: false})
 				});
-
-				let { id } = await res.json();
-				genQueue.push(id);
+				let { state, id } = await res.json();
 
 				playAnimation(resImg, "slam");
-				resImg.addClass("generating");
+				if (res.ok && state != "failed") {
+					resImg.addClass("generating");
+					genQueue.push(id);
+				} else {
+					resImg.addClass("errored");
+					wait(false);
+					return;
+				}
 
 				let checkIntervalId = setInterval(async () => {
 					playAnimation(resImg, "shake");
@@ -849,22 +1472,22 @@
 			async function checkGeneration(id, $resImg) {
 				let res = await fetch(corsProxy(`https://paint.api.wombo.ai/api/v2/tasks/${id}`), {
 					method: "GET",
-					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": "WEB-2.0.0"}
+					headers: {"Authorization": `bearer ${authToken}`, "x-app-version": appVersionHeader}
 				});
 
 				let resBody = await res.json();
 				if (resBody.state != "completed") return false;
 
 				let imageUrl = resBody.result.final;
-				$resImg.find("img").attr("src", imageUrl).on("load", () => {
-					$resImg.removeClass("generating");
-				});
+				$resImg.find("img").attr("src", imageUrl);
+				await loadImage($resImg.find("img"));
+				$resImg.removeClass("generating");
 
 				return true;
 			}
 
 			$("#create-button").on("click", () => {
-				if (!$("#create-button").hasClass("clickable") || !authToken) return;
+				if (!$("#create-button").hasClass("_clickable") || !authToken) return;
 
 				updateResGrid();
 				wait(true, "Generating...");
