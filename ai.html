@@ -24,8 +24,6 @@
 
 				font-family: "Montserrat";
 				color: white;
-
-				overflow: hidden;
 			}
 			body {
 				height: 100%;
@@ -458,8 +456,6 @@
 				border: none;	
 				font-size: 0.95rem;
 				color: var(--ui2);
-
-				--pop-scale: 120%;
 			}
 			#prompt .save-btn {
 				border-radius: 0;
@@ -474,10 +470,12 @@
 			}
 			#prompt-container.current-saved .save-btn {
 				color: #ffffff;
+				--pop-scale: 120%;
 			}
 			#prompt .delete-btn {
 				font-size: 0.85rem;
 				filter: brightness(70%);
+				--pop-scale: 125%;
 			}
 
 			/* (G) Prompt select - image */
@@ -583,7 +581,7 @@
 			}
 			#prompt-image .preview {
 				position: relative;
-				background-size: auto 100%;
+				background-size: contain;
 				img { 
 					flex: 1 0 0;
 					min-height: 0;
@@ -710,7 +708,7 @@
 			.quick-img .delete-btn {
 				width: 2rem;
 				height: 2rem;
-				--pop-scale: 120%;
+				--pop-scale: 125%;
 			}
 
 			/* (G) Prompt select - create */
@@ -825,6 +823,7 @@
 					width: 2.75rem;
 					height: 2.75rem;
 					font-size: 1.35rem;
+					text-shadow: 0 0 5px #000000FF;
 					--pop-scale: 115%;
 
 					box-sizing: content-box;
@@ -837,6 +836,7 @@
 				}
 
 				/* Clickable is a seperate element to avoid the filter transition */
+				position: relative;
 				._clickable {
 					position: absolute;
 					border-radius: inherit;
