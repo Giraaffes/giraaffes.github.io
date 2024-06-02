@@ -35,10 +35,14 @@
 
 				display: flex;
 				justify-content: center;
+				align-items: stretch;
+			}
+			body > * {
+				flex-shrink: 0;
 			}
 			body > section {
-				padding: 4rem 2rem;
-				height: 100%;
+				padding: 1rem 2rem 0 2rem;
+				margin: 3rem 0 4rem 0;
 				box-sizing: border-box;
 			}
 
@@ -109,6 +113,9 @@
 				font-weight: 400;
 				color: white;
 			}
+			a {
+				text-decoration: none;
+			}
 			br {
 				margin-bottom: 1rem !important;
 			}
@@ -124,7 +131,7 @@
 				pointer-events: none;
 			}
 
-			/* (O) Clickable classes */
+			/* (O) Clickables */
 			._clickable:not(:has(._clickable-overlay:hover)):hover {
 				background-image: linear-gradient(rgb(0 0 0/10%) 0 0);
 				&._brighten { background-image: linear-gradient(rgb(255 255 255/3%) 0 0); }
@@ -171,8 +178,76 @@
 				scale: var(--pop-scale);
 			}
 
+			/* (O) Corner icons */
+			div:has(._corner-icon) {
+				position: relative;
+			}
+
+			._corner-icon {
+				position: absolute;
+				top: 0;
+				padding: 0;
+				z-index: 1;
+
+				color: white;
+				text-shadow: 0 0 5px #00000080;
+				background: none;
+				border: none;
+				border-radius: inherit;
+
+				&._left {
+					left: 0;
+				}
+				&._right {
+					right: 0;
+				}
+
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			/* (O) Inset shadows */
+			._overlay-box {
+				position: relative;
+				& > * {
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					left: 0;
+					top: 0;
+					padding: inherit;
+					box-sizing: border-box;
+				}
+			}
+
+			._inset-shadows {
+				z-index: 1;
+				pointer-events: none;
+				padding-top: 0;
+				padding-bottom: 0;
+
+				display: flex;
+				flex-direction: column;
+				align-items: stretch;
+				justify-content: space-between;
+			}
+
+			._inset-shadows > div {
+				height: 20%;
+
+				&._top {
+					box-shadow: inset 0 10px 5px -5px #00000050;
+				}
+				&._bottom {
+					box-shadow: inset 0 -10px 5px -5px #00000050;
+				}
+				transition: opacity 0.1s;
+			}
+
 			/* (Y) Art style select */
 			#art-style-select {
+				position: relative;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
@@ -184,9 +259,8 @@
 			}
 
 			#art-styles-container {
-				position: relative;
 				width: 100%;
-				min-height: 0;
+				flex-grow: 1;
 			}
 			#art-styles {
 				width: round(down, 100%, 8rem);	
@@ -203,24 +277,6 @@
 				overflow-y: auto;
 				scrollbar-width: none;
 			}
-			.inset-shadow {
-				position: absolute;
-				width: 100%;
-				height: 20%;
-				pointer-events: none;
-
-				&.top {
-					top: 0;
-					box-shadow: inset 0 10px 5px -5px #00000050;
-				}
-				&.bottom {
-					bottom: 0;
-					box-shadow: inset 0 -10px 5px -5px #00000050;
-				}
-
-				transition: opacity 0.1s;
-			}
-
 			.art-style {
 				margin: 0.25rem 0.5rem;
 				padding: 0.25rem 0.5rem;
@@ -251,6 +307,13 @@
 
 				overflow-y: auto;
 				scrollbar-width: none;
+
+				/* > :first-child {
+					margin-top: 1rem;
+				}
+				> :last-child {
+					margin-bottom: 1rem;
+				} */
 			}
 			#prompt-select * {
 				box-sizing: border-box;
@@ -495,27 +558,13 @@
 				transition: opacity 0.25s ease-out;
 			}
 			#prompt-image button {
-				position: absolute;
-				z-index: 1;
 				width: 3rem;
 				height: 3rem;
-				top: 0;
-
-				color: white;
-				text-shadow: 0 0 6px #000000b0;
-				background: 0;
-				border: 0;
-				border-radius: 1rem;
-
 				font-size: 1rem;
 				--pop-scale: 120%;
 
 				&.remove-btn {
 					font-size: 120%;
-					left: 0;
-				}
-				&.save-btn {
-					right: 0;
 				}
 				#prompt-image:not(.current-saved) &.save-btn {
 					filter: brightness(80%);
@@ -634,9 +683,6 @@
 				flex-shrink: 0;
 				transform: rotate(90deg);
 
-				border: 2px solid var(--ui2);
-				border-radius: 0.5rem;
-
 				scale: 95%;
 				--pop-scale: 100%;
 			}
@@ -644,24 +690,18 @@
 			.quick-img {
 				position: relative;
 				overflow: hidden;
+
+				border: 2px solid var(--ui2);
+				border-radius: 0.5rem;
+
 				img {
 					width: 100%;
 					object-fit: cover;
 				}
 			}
 			.quick-img .delete-btn {
-				position: absolute;
 				width: 2rem;
 				height: 2rem;
-				top: 0;
-				right: 0;
-
-				color: white;
-				text-shadow: 0 0 5px #00000080;
-				background: none;
-				border: none;
-				border-radius: 0.5rem;
-
 				--pop-scale: 120%;
 			}
 
@@ -765,23 +805,75 @@
 
 				transition: filter 0.4s ease-out;
 
-				& img {
+				img {
 					width: 100%;
 					height: 100%;
+
 					transition: opacity 0.4s ease-out; 
+					opacity: 1;
+				}
+
+				._corner-icon {
+					width: 2.75rem;
+					height: 2.75rem;
+					font-size: 1.35rem;
+					--pop-scale: 115%;
+
+					box-sizing: content-box;
+					padding-top: 0.5rem;
+					&._left { padding-left: 0.5rem; }
+					&._right { padding-right: 0.5rem; }
+
+					transition: opacity 0.4s ease-out; 
+					opacity: 1;
+				}
+
+				/* Clickable is a seperate element to avoid the filter transition */
+				._clickable {
+					position: absolute;
+					border-radius: inherit;
+					width: 100%;
+					height: 100%;
+					opacity: 1;
+				}
+			}
+			.res-img:not(:has(img[src])), .res-img.generating {
+				img, ._corner-icon, ._clickable {
+					opacity: 0;
+					pointer-events: none;
 				}
 			}
 			.res-img.generating {
 				transition: filter 0.01s linear 0.5s;
 				filter: hue-rotate(-140deg);
-
-				& img {
-					opacity: 0;
-				}
 			}
 			.res-img.errored {
 				transition: filter 0.01s linear 0.5s;
 				filter: hue-rotate(60deg);
+			}
+
+			#result-modal {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				z-index: 1;
+				background-color: #00000090;
+
+				box-sizing: border-box;
+				padding: 2rem;
+				display: flex;
+				align-items: stretch;
+				justify-content: center;
+
+				overflow: hidden; /* There's no overflow but just in case */
+
+				opacity: 0;
+				pointer-events: none;
+				&.show {
+					opacity: 1;
+					pointer-events: all;
+				}
+				transition: opacity 0.3s ease-in-out;
 			}
 			/* !SECTION */
 		</style>
@@ -791,64 +883,74 @@
 		<!-- (Y) Art style select -->
 		<section id="art-style-select" style="width: 30%;">
 			<h1>Choose art style</h1>
-			<div id="art-styles-container">
-				<div class="inset-shadow top"></div>
+			<div id="art-styles-container" class="_overlay-box">
+				<div class="_inset-shadows">
+					<div class="_top"></div>
+					<div class="_bottom"></div>
+				</div>
+
 				<div id="art-styles"></div>
-				<div class="inset-shadow bottom"></div>
 			</div>
 		</section><hr>
 		
 		<!-- (G) Prompt select -->
-		<section id="prompt-select" style="width: 30%;">
-			<h1>Enter prompt</h1>
-			<div>
-				<div id="prompt-container">
-					<div id="prompt">
-						<input type="text" placeholder="A beautiful landscape...">
-						<button class="side-btn save-btn _clickable_pop">
+		<section class="_overlay-box" style="width: 30%;">
+			<div class="_inset-shadows">
+				<div class="_top"></div>
+				<div class="_bottom"></div>
+			</div>
+			
+			<div id="prompt-select">
+				<h1>Enter prompt</h1>
+				<div>
+					<div id="prompt-container">
+						<div id="prompt">
+							<input type="text" placeholder="A beautiful landscape...">
+							<button class="side-btn save-btn _clickable_pop">
+								<i class="fa-solid fa-bookmark"></i>
+							</button>
+							<li class="saved"><ul class="empty-info">You have no saved prompts</ul></li>
+						</div>
+						<button id="saved-prompts-btn"class="_clickable">
+							<i class="fa-solid fa-angle-down open-icon"></i>
+							<i class="fa-solid fa-angle-up close-icon"></i>
+						</button>
+					</div>
+					<span id="prompt-charcount"><span class="value">0</span>/320 characters</span>
+				</div>
+				<br><br>
+				<h1>Select input image&nbsp;<span class="optional-info">(optional)</span></h1>
+				<div id="prompt-image-container">
+					<div id="prompt-image-select" class="_clickable _brighten">
+						<span class="upload"><b>Upload image</b> or drag an image here</span>
+						<span class="loading">Uploading image...</span>
+						<input type="file" accept="image/*,.png,.jpg,.jpeg,.heic,.heif">
+					</div>
+					<div id="prompt-image">
+						<button class="remove-btn _corner-icon _left _clickable_pop">
+							<i class="fa-solid fa-xmark"></i>
+						</button>
+						<button class="save-btn _corner-icon _right _clickable_pop">
 							<i class="fa-solid fa-bookmark"></i>
 						</button>
-						<li class="saved"><ul class="empty-info">You have no saved prompts</ul></li>
+						<div class="preview-container"><div class="preview"><img/></div></div>
+						<div class="weight">
+							<h2>Adjust image weight: <span class="value">50%</span></h2>
+							<input type="range" min="0" max="100" value="50" step="5">
+						</div>
 					</div>
-					<button id="saved-prompts-btn"class="_clickable">
-						<i class="fa-solid fa-angle-down open-icon"></i>
-						<i class="fa-solid fa-angle-up close-icon"></i>
-					</button>
-				</div>
-				<span id="prompt-charcount"><span class="value">0</span>/320 characters</span>
-			</div>
-			<br><br>
-			<h1>Select input image&nbsp;<span class="optional-info">(optional)</span></h1>
-			<div id="prompt-image-container">
-				<div id="prompt-image-select" class="_clickable _brighten">
-					<span class="upload"><b>Upload image</b> or drag an image here</span>
-					<span class="loading">Uploading image...</span>
-					<input type="file" accept="image/*,.png,.jpg,.jpeg,.heic,.heif">
-				</div>
-				<div id="prompt-image">
-					<button class="remove-btn _clickable_pop">
-						<i class="fa-solid fa-xmark"></i>
-					</button>
-					<button class="save-btn _clickable_pop">
-						<i class="fa-solid fa-bookmark"></i>
-					</button>
-					<div class="preview-container"><div class="preview"><img/></div></div>
-					<div class="weight">
-						<h2>Adjust image weight: <span class="value">50%</span></h2>
-						<input type="range" min="1" max="100" value="50" step="1">
-					</div>
-				</div>
-				<br>
-				<div id="saved-and-recent-images">
-					<h2>Saved images</h2>
-					<div><div id="saved-images" class="img-roller"></div></div>
 					<br>
-					<h2>Recent uploads</h2>
-					<div><div id="recent-images" class="img-roller"></div></div>
+					<div id="saved-and-recent-images">
+						<h2>Saved images (<span id="saved-images-count"></span>)</h2>
+						<div><div id="saved-images" class="img-roller"></div></div>
+						<br>
+						<h2>Recent images</h2>
+						<div><div id="recent-images" class="img-roller"></div></div>
+					</div>
 				</div>
+				<br><br>
+				<div><button id="create-button">Create</button></div>
 			</div>
-			<br><br>
-			<div><button id="create-button">Create</button></div>
 		</section><hr>
 
 		<!-- (C) Results -->
@@ -868,6 +970,8 @@
 
 			<div id="res-grid-container"><div id="res-grid"></div></div>
 		</section>
+		
+		<div id="result-modal"><img></div>
 
 		<!-- (_) Templates -->
 		<div id="templates" style="display: none;">
@@ -882,12 +986,22 @@
 			</figure>
 			<div class="quick-img saved-img _clickable_pop">
 				<img/>
-				<button class="delete-btn _clickable_pop">
+				<button class="delete-btn _corner-icon _right _clickable_pop">
 					<i class="fa-solid fa-trash"></i>
 				</button>
 			</div>
 			<div class="quick-img recent-img _clickable_pop"><img/></div>
-			<div class="res-img"><img src="blank.png"/></div>
+			<div class="res-img">
+				<div class="_clickable">
+					<a class="download-btn _clickable-overlay _corner-icon _left _clickable_pop">
+						<i class="fa-solid fa-circle-down"></i>
+					</a>
+					<button class="reinput-btn _clickable-overlay _corner-icon _right _clickable_pop">
+						<i class="fa-solid fa-repeat"></i>
+					</button>
+				</div>
+				<img/>
+			</div>
 		</div>
 		<!-- !SECTION -->
 
@@ -897,6 +1011,10 @@
 			// (R) Functions
 			function map(x, a1, b1, a2, b2) {
 				return (x - a1) / (b1 - a1) * (b2 - a2) + a2;
+			}
+
+			function intDiv(num, den) {
+				return [Math.floor(num / den), num % den];
 			}
 
 			function getStoredArray(name) {
@@ -915,17 +1033,18 @@
 				return formData;
 			}
 
-			function setInputFiles($inputEl, files) {
+			function triggerInput($inputEl, files) {
 				let dataTransfer = new DataTransfer();
 				for (let file of files) {
 					dataTransfer.items.add(file);
 				}
 				$inputEl[0].files = dataTransfer.files;
+				$inputEl.trigger("input", [true]);
 			}
 
 			function corsProxy(url) {
 				// return `http://localhost:4000/?url=${url}`;
-				return `https://www.htgnyt.dk/cors?url=${url}`;
+				return `https://www.htgnyt.dk/cors?url=${encodeURIComponent(url)}`;
 			}
 
 			function getFileBase64(file) {
@@ -947,7 +1066,7 @@
 				{name: "dreamland", id: 115}, {name: "graffiti", id: 148},
 				{name: "clay", id: 147}, {name: "tao", id: 141},
 				{name: "robots", id: 145}, {name: "crochet", id: 144},
-				{name: "mechanical b", id: 140}, {name: "mechanical a", id: 139},
+				{name: "mechanical a", id: 139}, {name: "mechanical b", id: 140},
 				{name: "ukiyo-e", id: 138}, {name: "tattoo", id: 137},
 				{name: "colored tattoo", id: 136}, {name: "botany", id: 135},
 				{name: "starry", id: 134}, {name: "retro pop", id: 133},
@@ -1007,17 +1126,22 @@
 			}
 
 			// (O) UI
-			$("#art-styles").on("scroll", () => {
-				let { offsetHeight, scrollHeight, scrollTop} = $("#art-styles")[0];
-				let bottomScrollTop = scrollHeight - offsetHeight;
+			let scrollShadowDivs = $("._inset-shadows").siblings(":not(._inset-shadows)");
+			scrollShadowDivs.on("scroll", (e) => {
+				let div = $(e.target);
+				let topShadow = div.siblings("._inset-shadows").find("._top");
+				let bottomShadow = div.siblings("._inset-shadows").find("._bottom");
+				let { offsetHeight, scrollHeight, scrollTop } = div[0];
 
-				$("#art-styles-container .inset-shadow").css("opacity", 1);
-				if (scrollTop < 5) {
-					$("#art-styles-container .inset-shadow.top").css("opacity", 0);
-				} else if (bottomScrollTop - scrollTop < 5) {
-					$("#art-styles-container .inset-shadow.bottom").css("opacity", 0);
-				}
+				topShadow.css("opacity", scrollTop > 10 ? 1 : 0);
+				bottomShadow.css("opacity", (scrollTop + offsetHeight) - scrollHeight < -10 ? 1 : 0);
 			}).trigger("scroll");
+			$(() => {
+				scrollShadowDivs.trigger("scroll");
+			});
+			$(window).on("resize", () => {
+				scrollShadowDivs.trigger("scroll");
+			});
 			
 			$("#art-styles").on("mouseover", e => {
 				let artStyleEl = $(e.target).closest(".art-style");
@@ -1033,7 +1157,7 @@
 
 			$("#prompt-image-select input").on("dragenter", () => {
 				$("#prompt-image-select").addClass("_hover");
-			}).on("dragleave", () => {
+			}).on("dragleave mouseleave", () => {
 				$("#prompt-image-select").removeClass("_hover");
 			});
 
@@ -1063,18 +1187,30 @@
 				promptWeightInput.addClass("dragging");
 			}).on("mouseup", () => {
 				promptWeightInput.removeClass("dragging");
+				promptWeightInput.attr("step", 5);
 			}).on("input", e => {
 				let promptWeight = promptWeightInput.val();
 				promptWeightInput.css("--progress", `${promptWeight}%`);
 				$("#prompt-image .weight .value").text(`${promptWeight}%`);
 
-				let blurPreviewImg = map(promptWeight, 1, 100, 2.5, 0.1);
-				$("#prompt-image .preview").css("filter", `blur(${blurPreviewImg}vh)`);
+				// A little annoying perhaps
+				// let blurPreviewImg = map(promptWeight, 1, 100, 2.5, 0.1);
+				// $("#prompt-image .preview").css("filter", `blur(${blurPreviewImg}vh)`);
 			}).trigger("input");
 
-			// Testing
+			let shiftHeld = false;
+			$(document).on("keydown", e => {
+				if (!shiftHeld && e.key == "Shift") {
+					shiftHeld = true;
+					promptWeightInput.attr("step", 1);
+				}
+			}).on("keyup", e => {
+				if (e.key == "Shift") shiftHeld = false;
+			});
+
+			// For testing
 			// $(document).on("keypress", e => {
-			// 	uif (e.key == "i") $("#prompt-image-container").toggleClass("img-selected");
+			// 	if (e.key == "i") $("#prompt-image-container").toggleClass("img-selected");
 			// });
 
 			// (Y) Art styles
@@ -1186,7 +1322,7 @@
 
 			// (G) Quick images
 			let savedImages = getStoredArray("savedImages");
-			let recentImages = getStoredArray("recentImages");
+			let recentImages = getStoredArray("recentImages").slice(0, 10);
 
 			function loadQuickImage(imgData, template) {
 				let el = $("#templates").find(template).clone();
@@ -1201,20 +1337,19 @@
 
 			async function selectQuickImage(e) {
 				let el = $(e.currentTarget);
-				let imgUrl = el.attr("data-url")
+				let imgUrl = el.attr("data-url");
 
 				let imgRes = await fetch(imgUrl);
 				let imgResBlob = await imgRes.blob();
 				
 				let imgExt = imgUrl.match(/[^\.]+$/)[0];
 				let imgFile = new File([imgResBlob], `image.${imgExt}`);
-				setInputFiles($("#prompt-image-select input"), [imgFile]);
-				$("#prompt-image-select input").trigger("input", [true]);
+				triggerInput($("#prompt-image-select input"), [imgFile]);
 			}
 
-			async function addRecentImage(imgBase64) {
+			async function addRecentImage(imgString) {
 				let uploadRes = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`, {
-					method: "POST", body: createFormData({image: imgBase64})
+					method: "POST", body: createFormData({image: imgString})
 				});
 				let { data: imgUploadData } = await uploadRes.json();
 
@@ -1225,12 +1360,11 @@
 				recentImages.unshift(imgData);
 				$("#recent-images").prepend(loadQuickImage(imgData, ".recent-img"));
 				
-				storeArray("recentImages", recentImages)
-
+				storeArray("recentImages", recentImages);
 			}
 
 			function saveImage() {
-				let { urlSmall, urlFull } = recentImages[recentImages.length - 1];
+				let { urlSmall, urlFull } = recentImages[0];
 
 				let alreadySavedIndex = savedImages.findIndex(i => i.urlFull == urlFull);
 				if (alreadySavedIndex >= 0) {
@@ -1244,6 +1378,7 @@
 
 				storeArray("savedImages", savedImages);
 				checkCurrentImageSaved();
+				updateSavedImagesCount();
 			}
 			$("#prompt-image .save-btn").on("click", saveImage);
 
@@ -1256,16 +1391,25 @@
 				let index = savedImages.findIndex(i => i.urlFull == urlFull);
 				savedImages.splice(index, 1);
 				$(".saved-img").filter((_, e) => $(e).attr("data-url") == urlFull).remove();
+
+				storeArray("savedImages", savedImages);
+				checkCurrentImageSaved();
+				updateSavedImagesCount();
 			}
 
 			function checkCurrentImageSaved() {
-				let { urlSmall, urlFull } = recentImages[recentImages.length - 1];
+				let { urlSmall, urlFull } = recentImages[0];
 				if (savedImages.find(i => i.urlFull == urlFull)) {
 					$("#prompt-image").addClass("current-saved");
 				} else {
 					$("#prompt-image").removeClass("current-saved");
 				}
 			}
+
+			function updateSavedImagesCount() {
+				$("#saved-images-count").text($("#saved-images .saved-img").length);
+			}
+			updateSavedImagesCount();
 
 			// (G) Create button
 			let waiting = false;
@@ -1295,24 +1439,45 @@
 			$("#prompt input").on("input", updateCreateButton);
 			updateCreateButton();
 
-			// (C) Results grid
+			// (C) Results
 			let [ resGridW, resGridH ] = JSON.parse(localStorage.getItem("gridSize")) || [1, 1];
+
+			function loadResGrid() {
+				let maxNumResults = maxResGridSize * maxResGridSize;
+				for (let i = 0; i < maxNumResults; i++) {
+					let el = $("#templates .res-img").clone();
+					el.on("click", displayRes);
+					el.find(".reinput-btn").on("click", reinputRes);
+					$("#res-grid").append(el);
+				}
+			}
+			loadResGrid();
 
 			function updateResGrid() {
 				$("#res-grid").css("grid",
 					`repeat(${resGridH}, 1fr) / repeat(${resGridW}, 1fr)`
-				).children().remove();
+				);
 				$("#res-grid-container, #res-grid").css("aspect-ratio",
 					`${resGridW} / ${resGridH}`
 				);
-				$("#res-grid").append(
-					$("#templates .res-img").clone().prop("outerHTML").repeat(resGridW * resGridH)
-				);
+				$("#res-grid .res-img").each((i, e) => {
+					let [y, x] = intDiv(i, resGridW);
+					if (x < resGridW && y < resGridH) {
+						$(e).show();
+					} else {
+						$(e).hide();
+					}
+				});
 			}
 			updateResGrid();
-			// $(".res-img").on("click", e => {
-			// 	playAnimation($(e.currentTarget), "slam");	
-			// });
+
+			function clearResGrid() {
+				// TODO also play some funky animation
+				$("#res-grid .res-img img").each((_, e) => {
+					URL.revokeObjectURL($(e).attr("src"));
+					$(e).removeAttr("src");
+				});
+			}
 
 			$(".res-grid-size").on("click", e => {
 				let btn = $(e.target);
@@ -1325,6 +1490,43 @@
 				updateResGrid();
 
 				localStorage.setItem("gridSize", JSON.stringify([resGridW, resGridH]));
+			});
+
+			async function reinputRes(e) {
+				e.stopPropagation();
+
+				let imgUrl = $(e.currentTarget).closest(".res-img").find("img").attr("src");
+				if (!imgUrl || imgUrl == "/blank.png") return;
+
+				wait(true, "Re-inputting image...");
+				$("#prompt-image .remove-btn").trigger("click");
+
+				let blob = await (await fetch(imgUrl)).blob();
+				let file = new File([blob], "image.jpg");
+				triggerInput($("#prompt-image-select input"), [file]);
+				getFileBase64(blob).then(addRecentImage);
+
+				clearResGrid();
+				wait(false);
+			}
+
+			function displayRes(e) {
+				if ($(e.target).closest(".download-btn").length == 1) return;
+
+				let imgUrl = $(e.currentTarget).closest(".res-img").find("img").attr("src");
+				if (!imgUrl || imgUrl == "/blank.png") return;
+
+				$("#result-modal img").attr("src", imgUrl);
+				$("#result-modal").addClass("show");
+			}
+			$(document).on("click", e => {
+				if ($(e.target).closest(".res-img").length != 1) {
+					$("#result-modal").removeClass("show");
+				}
+			}).on("keydown", e => {
+				if (e.key == "Escape") {
+					$("#result-modal").removeClass("show");
+				}
 			});
 
 			// (B) Auth token
@@ -1408,7 +1610,6 @@
 					uploadImagePromises[i] = uploadImage(fileBase64, fileExt);
 				}
 				await Promise.all(uploadImagePromises);
-				console.log(mediastores);
 
 				if (!restore) await addRecentImage(fileBase64);
 
@@ -1428,7 +1629,7 @@
 			let genQueue = [];
 
 			async function startGeneration(index) {
-				let resImg = $(".res-img").eq(index);
+				let resImg = $("#res-grid .res-img").eq(index);
 
 				let res = await fetch(corsProxy("https://paint.api.wombo.ai/api/v2/tasks"), {
 					method: "POST", referrer: "",
@@ -1476,20 +1677,31 @@
 				});
 
 				let resBody = await res.json();
-				if (resBody.state != "completed") return false;
+				if (resBody.state == "completed") {
+					let imgUrl = resBody.result.final;
+					finishGeneration(imgUrl, $resImg);
+					return true;
+				} else {
+					return false;
+				}
+			}
 
-				let imageUrl = resBody.result.final;
-				$resImg.find("img").attr("src", imageUrl);
+			async function finishGeneration(imgUrl, $resImg) {
+				let blob = await (await fetch(corsProxy(imgUrl))).blob();
+				let blobUrl = URL.createObjectURL(blob);
+				
+				let resFilename = $("#prompt input").val().trim().replaceAll(/\s+/g, "_") + ".jpg";
+				$resImg.find("img").attr("src", blobUrl);
+				$resImg.find(".download-btn").attr("download", resFilename).attr("href", blobUrl);
+
 				await loadImage($resImg.find("img"));
 				$resImg.removeClass("generating");
-
-				return true;
 			}
 
 			$("#create-button").on("click", () => {
 				if (!$("#create-button").hasClass("_clickable") || !authToken) return;
 
-				updateResGrid();
+				clearResGrid();
 				wait(true, "Generating...");
 				
 				let numGenerations = resGridW * resGridH;
