@@ -646,15 +646,6 @@
 				}
 			}
 
-			#saved-and-recent-images {
-				overflow: hidden;
-				max-height: 20rem;
-				#prompt-image-container.img-selected & {
-					max-height: 0;
-				}
-				transition: max-height 0.5s ease-in;
-			}
-
 			/* (G) Prompt select - quick images */
 			div:has(> .img-roller) {
 				container-type: size;
@@ -688,13 +679,22 @@
 				scale: 95%;
 				--pop-scale: 100%;
 			}
-			
+
+			.quick-img-container {
+				overflow: hidden;
+				max-height: 10rem;
+				#prompt-image-container.img-selected & {
+					max-height: 0;
+				}
+				transition: max-height 0.5s ease-in;
+			}
 			.quick-img-container:not(:has(.quick-img)) { 
 				display: none;
 			}
 			br:has(+ .quick-img-container):not(:has(+ .quick-img-container .quick-img)) {
 				display: none;
 			}
+
 			.quick-img {
 				position: relative;
 				overflow: hidden;
@@ -1088,6 +1088,7 @@
 				{name: "baroque", id: 120}, {name: "monster", id: 119},
 				{name: "figure", id: 118},
 			];
+			const loadRecentImages = 10;
 			const maxResGridSize = 2;
 
 			// Don't care that this is public
@@ -1331,7 +1332,7 @@
 
 			// (G) Quick images
 			let savedImages = getStoredArray("savedImages");
-			let recentImages = getStoredArray("recentImages").slice(0, 10);
+			let recentImages = getStoredArray("recentImages");
 
 			function loadQuickImage(imgData, template) {
 				let el = $("#templates").find(template).clone();
@@ -1342,7 +1343,7 @@
 				return el;
 			}
 			$("#saved-images").append(savedImages.map(i => loadQuickImage(i, ".saved-img")));
-			$("#recent-images").append(recentImages.map(i => loadQuickImage(i, ".recent-img")));
+			$("#recent-images").append(recentImages.slice(0, loadRecentImages).map(i => loadQuickImage(i, ".recent-img")));
 
 			async function selectQuickImage(e) {
 				let el = $(e.currentTarget);
@@ -1354,6 +1355,17 @@
 				let imgExt = imgUrl.match(/[^\.]+$/)[0];
 				let imgFile = new File([imgResBlob], `image.${imgExt}`);
 				triggerInput($("#prompt-image-select input"), [imgFile]);
+
+				let usedImgIndex = recentImages.findIndex(i => i.urlFull == imgUrl);
+				let usedImgEl = $("#recent-images .recent-img").filter((_, el) => $(el).attr("data-url") == imgUrl);
+				if (usedImgEl.length > 0) {
+					$("#recent-images").prepend(usedImgEl.first());
+				} else {
+					$("#recent-images").prepend(loadQuickImage(recentImages[usedImgIndex], ".recent-img"));
+				}
+
+				recentImages.unshift(recentImages.splice(usedImgIndex, 1)[0]);
+				storeArray("recentImages", recentImages);
 			}
 
 			async function addRecentImage(imgString) {
