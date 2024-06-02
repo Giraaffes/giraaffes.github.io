@@ -689,6 +689,12 @@
 				--pop-scale: 100%;
 			}
 			
+			.quick-img-container:not(:has(.quick-img)) { 
+				display: none;
+			}
+			br:has(+ .quick-img-container):not(:has(+ .quick-img-container .quick-img)) {
+				display: none;
+			}
 			.quick-img {
 				position: relative;
 				overflow: hidden;
@@ -941,10 +947,12 @@
 						</div>
 					</div>
 					<br>
-					<div id="saved-and-recent-images">
+					<div class="quick-img-container">
 						<h2>Saved images (<span id="saved-images-count"></span>)</h2>
 						<div><div id="saved-images" class="img-roller"></div></div>
-						<br>
+					</div>
+					<br>
+					<div class="quick-img-container">
 						<h2>Recent images</h2>
 						<div><div id="recent-images" class="img-roller"></div></div>
 					</div>
