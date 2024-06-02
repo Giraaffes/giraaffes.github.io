@@ -24,6 +24,8 @@
 
 				font-family: "Montserrat";
 				color: white;
+
+				overflow: hidden;
 			}
 			body {
 				height: 100%;
@@ -179,7 +181,7 @@
 			}
 
 			/* (O) Corner icons */
-			div:has(._corner-icon) {
+			div:has(> ._corner-icon) {
 				position: relative;
 			}
 
@@ -301,7 +303,7 @@
 			}
 
 			/* (G) Prompt select */
-			#prompt-select {
+			#prompt-select-content {
 				display: flex;
 				flex-direction: column;
 
@@ -315,17 +317,17 @@
 					margin-bottom: 1rem;
 				} */
 			}
-			#prompt-select * {
+			#prompt-select-content * {
 				box-sizing: border-box;
 				outline: none;
 				margin: 0;
 			}
-			#prompt-select > * {
+			#prompt-select-content > * {
 				& > * {
 					margin-bottom: 0.4rem;
 				}
 			}
-			#prompt-select .optional-info {
+			#prompt-select-content .optional-info {
 				margin: 0;
 				color: var(--ui4);
 				font-size: 1rem;
@@ -899,8 +901,7 @@
 				<div class="_top"></div>
 				<div class="_bottom"></div>
 			</div>
-			
-			<div id="prompt-select">
+			<div id="prompt-select-content">
 				<h1>Enter prompt</h1>
 				<div>
 					<div id="prompt-container">
