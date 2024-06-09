@@ -50,7 +50,7 @@
 				let videoId = (videoUrl.match(/v=(\w+)/) || [])[1];
 				if (videoId) $("#preview").attr("src", `https://www.youtube.com/embed/${videoId}?controls=0`);
 
-				let videoInfo = await fetch(`http://127.0.0.1:5000/info?url=${encodeURIComponent(videoUrl)}`);
+				let videoInfo = await fetch(`https://www.htgnyt.dk/ytdl/info?url=${encodeURIComponent(videoUrl)}`);
 				let { title, formats } = await videoInfo.json();
 
 				$("#loading").hide();
@@ -69,7 +69,7 @@
 					let videoItag = formats.find(f => f.qualityLabel == videoQuality).itag;
 					let audioQuality = $("#download select:eq(1) option:selected").data("value");
 					let audioItag = formats.find(f => f.audioBitrate == audioQuality).itag;
-					$("#download a").attr("href", `http://127.0.0.1:5000/video/${encodeURIComponent(title)}.mkv?url=${videoUrl}&video=${videoItag}&audio=${audioItag}`);
+					$("#download a").attr("href", `https://www.htgnyt.dk/ytdl/video/${encodeURIComponent(title)}.mkv?url=${videoUrl}&video=${videoItag}&audio=${audioItag}`);
 				}).trigger("change");
 			}
 			init();
