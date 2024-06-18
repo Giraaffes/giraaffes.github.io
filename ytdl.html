@@ -51,7 +51,7 @@
 				if (videoId) $("#preview").attr("src", `https://www.youtube.com/embed/${videoId}?controls=0`);
 
 				let videoInfo = await fetch(`https://www.htgnyt.dk/ytdl/info?url=${encodeURIComponent(videoUrl)}`);
-				let { title, formats } = await videoInfo.json();
+				let { formats } = await videoInfo.json();
 
 				$("#loading").hide();
 				$("#download").show();
@@ -70,7 +70,7 @@
 					let audioQuality = $("#download select:eq(1) option:selected").data("value");
 					let audioItag = formats.find(f => f.audioBitrate == audioQuality).itag;
 					$("#download a").attr("href", 
-						`https://www.htgnyt.dk/ytdl/video/${encodeURIComponent(title)}.mp4?url=${videoUrl}&video=${videoItag}&audio=${audioItag}`
+						`https://www.htgnyt.dk/ytdl/video?url=${videoUrl}&video=${videoItag}&audio=${audioItag}`
 					);
 				}).trigger("change");
 			}
