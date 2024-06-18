@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Download YouTube video</title>
-
 		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 		<script src="https://kit.fontawesome.com/8ef543fcad.js" crossorigin="anonymous"></script>
 
 		<style>
 			html, body {
-				width: 100%;
-				box-sizing: border-box;
+				box-sizing: content-box;
 			}
 			body {
+				margin: 2rem;
 				font-family: "Montserrat";
 				* {
 					margin-bottom: 1rem;
@@ -24,10 +22,15 @@
 			select {
 				font-size: 1rem;
 			}
+			input {
+				width: 20rem;
+			}
 		</style>
 	</head>
 	<body>
 		<h1>Download YouTube video</h1>
+		<p style="display: inline;">Video URL:</p>&nbsp;&nbsp;<input type="text" id="url">&nbsp;&nbsp;<button id="go">Go</button>
+
 		<iframe id="preview" width="533" height="300"></iframe>
 
 		<p id="loading">Loading...</p>
@@ -43,12 +46,19 @@
 				return [...new Set(array.map(mapFunc).filter(q => q))];
 			}
 
-			async function init() {
-				$("#download").hide();
+			const videoUrlRegex = /^https:\/\/(?:www\.)?youtube.com\/watch\?v=(?<id>[\w-]+)$/;
+			async function go() {
+				$("#preview, #loading, #download").hide();
+				$("option").remove();
+				$("#download select").off();
+				$("#download a").removeAttr("href");
+				
+				let videoUrl = $("#url").val().trim();
+				let videoUrlMatch = videoUrl.match(videoUrlRegex);
+				if (!videoUrlMatch) return;
 
-				let videoUrl = (new URL(location)).searchParams.get("url");
-				let videoId = (videoUrl.match(/v=(\w+)/) || [])[1];
-				if (videoId) $("#preview").attr("src", `https://www.youtube.com/embed/${videoId}?controls=0`);
+				$("#preview").show().attr("src", `https://www.youtube.com/embed/${videoUrlMatch.id}?controls=0`);
+				$("#loading").show();
 
 				let videoInfo = await fetch(`https://www.htgnyt.dk/ytdl/info?url=${encodeURIComponent(videoUrl)}`);
 				let { formats } = await videoInfo.json();
@@ -57,7 +67,7 @@
 				$("#download").show();
 
 				let videoQualities = uniqueValues(formats, f => f.qualityLabel);
-				videoQualities.sort((a, b) => parseInt(b.slice(0, -1)) - parseInt(a.slice(0, -1)));
+				videoQualities.sort((a, b) => parseInt(b.match(/^\d+/)[0]) - parseInt(a.match(/^\d+/)[0]));
 				$("#download select:eq(0)").append(videoQualities.map(q => `<option data-value="${q}">${q}</option>`));
 				
 				let audioQualities = uniqueValues(formats, f => f.audioBitrate);
@@ -74,7 +84,12 @@
 					);
 				}).trigger("change");
 			}
-			init();
+
+			let pageVideoUrl = (new URL(location)).searchParams.get("url");
+			if (pageVideoUrl) $("#url").val(pageVideoUrl);
+
+			$("#preview, #loading, #download").hide();
+			$("#go").on("click", go);
 		</script>
 	</body>
 </html>
