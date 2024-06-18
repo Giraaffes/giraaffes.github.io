@@ -69,7 +69,9 @@
 					let videoItag = formats.find(f => f.qualityLabel == videoQuality).itag;
 					let audioQuality = $("#download select:eq(1) option:selected").data("value");
 					let audioItag = formats.find(f => f.audioBitrate == audioQuality).itag;
-					$("#download a").attr("href", `https://www.htgnyt.dk/ytdl/video/${encodeURIComponent(title)}.mkv?url=${videoUrl}&video=${videoItag}&audio=${audioItag}`);
+					$("#download a").attr("href", 
+						`https://www.htgnyt.dk/ytdl/video/${encodeURIComponent(title)}.mp4?url=${videoUrl}&video=${videoItag}&audio=${audioItag}`
+					);
 				}).trigger("change");
 			}
 			init();
