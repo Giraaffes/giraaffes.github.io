@@ -2,6 +2,9 @@
 
 <html>
 	<head>
+		<title>marcus.cool/ai</title>
+		<link rel="icon" href="/ai_icon.png">
+
 		<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 		<script src="https://kit.fontawesome.com/8ef543fcad.js" crossorigin="anonymous"></script>
 
@@ -263,7 +266,7 @@
 				flex-grow: 1;
 			}
 			#art-styles {
-				width: round(down, 100%, 8rem);	
+				width: 100%;	
 				height: 100%;
 				margin: auto;
 				padding: 0.75rem 0;
@@ -273,6 +276,7 @@
 				grid: auto-flow / repeat(auto-fit, 8rem);
 				row-gap: 0.5rem;
 				place-items: stretch center;
+				justify-content: center;
 
 				overflow-y: auto;
 				scrollbar-width: none;
@@ -463,6 +467,7 @@
 				#prompt-container:not(.show-saved) & { 
 					border-bottom-right-radius: 1rem; 
 				}
+				--pop-scale: 120%;
 
 				#prompt:has(.input:placeholder-shown) & {
 					display: none;
@@ -470,7 +475,6 @@
 			}
 			#prompt-container.current-saved .save-btn {
 				color: #ffffff;
-				--pop-scale: 120%;
 			}
 			#prompt .delete-btn {
 				font-size: 0.85rem;
@@ -993,13 +997,13 @@
 			<figure class="art-style">
 				<img class="_clickable_pop"/><figcaption></figcaption>
 			</figure>
-			<div class="quick-img saved-img _clickable_pop">
+			<div class="quick-img saved-img _clickable_filter">
 				<img/>
 				<button class="delete-btn _corner-icon _right _clickable_pop">
 					<i class="fa-solid fa-trash"></i>
 				</button>
 			</div>
-			<div class="quick-img recent-img _clickable_pop"><img/></div>
+			<div class="quick-img recent-img _clickable_filter"><img/></div>
 			<div class="res-img">
 				<div class="_clickable">
 					<a class="download-btn _clickable-overlay _corner-icon _left _clickable_pop">
@@ -1072,7 +1076,8 @@
 
 			// (R) Constants
 			const styles = [
-				{name: "dreamland", id: 115}, {name: "graffiti", id: 148},
+				{name: "dreamland", id: 115}, {name: "papercut", id: 151},
+				{name: "flat", id: 150}, {name: "graffiti", id: 148},
 				{name: "clay", id: 147}, {name: "tao", id: 141},
 				{name: "robots", id: 145}, {name: "crochet", id: 144},
 				{name: "mechanical a", id: 139}, {name: "mechanical b", id: 140},
