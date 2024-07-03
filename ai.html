@@ -1198,11 +1198,22 @@
 			imgResizeObserver.observe(previewImg);
 
 			let promptWeightInput = $("#prompt-image .weight input");
+			let shiftHeld = false;
+			$(document).on("keydown", e => {
+				if (e.key == "Shift") {
+					if (!shiftHeld && promptWeightInput.is(".dragging")) {
+						promptWeightInput.attr("step", 1);
+					}
+					shiftHeld = true;
+				}
+			}).on("keyup", e => {
+				if (e.key == "Shift") shiftHeld = false;
+			});
 			promptWeightInput.on("mousedown", () => {
 				promptWeightInput.addClass("dragging");
+				promptWeightInput.attr("step", shiftHeld ? 1 : 5);
 			}).on("mouseup", () => {
 				promptWeightInput.removeClass("dragging");
-				promptWeightInput.attr("step", 5);
 			}).on("input", e => {
 				let promptWeight = promptWeightInput.val();
 				promptWeightInput.css("--progress", `${promptWeight}%`);
@@ -1212,16 +1223,6 @@
 				// let blurPreviewImg = map(promptWeight, 1, 100, 2.5, 0.1);
 				// $("#prompt-image .preview").css("filter", `blur(${blurPreviewImg}vh)`);
 			}).trigger("input");
-
-			let shiftHeld = false;
-			$(document).on("keydown", e => {
-				if (!shiftHeld && e.key == "Shift") {
-					shiftHeld = true;
-					promptWeightInput.attr("step", 1);
-				}
-			}).on("keyup", e => {
-				if (e.key == "Shift") shiftHeld = false;
-			});
 
 			// For testing
 			// $(document).on("keypress", e => {
