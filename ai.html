@@ -687,8 +687,12 @@
 				max-height: 10rem;
 				#prompt-image-container.img-selected & {
 					max-height: 0;
+					margin: 0;
 				}
 				transition: max-height 0.5s ease-in;
+			}
+			#prompt-image-container.img-selected br:has(+ .quick-img-container) {
+				display: none;
 			}
 			.quick-img-container:not(:has(.quick-img)) { 
 				display: none;
@@ -1104,6 +1108,7 @@
 
 			const startGenerationInterval = 100;
 			const checkGenerationInterval = 2000;
+			const maxGenerationChecks = 7;
 
 			// (O) Animations
 			const animations = {
@@ -1679,21 +1684,24 @@
 					resImg.addClass("generating");
 					genQueue.push(id);
 				} else {
-					resImg.addClass("errored");
+					
 					wait(false);
 					return;
 				}
 
+				let checkIndex = 0;
 				let checkIntervalId = setInterval(async () => {
 					playAnimation(resImg, "shake");
 
 					let finished = await checkGeneration(id, resImg);
-					if (finished) {
+					if (finished || checkIndex == maxGenerationChecks) {
 						clearInterval(checkIntervalId);
+						if (checkIndex == maxGenerationChecks) resImg.addClass("errored");
 
 						genQueue = genQueue.filter(q => q != id);
 						if (genQueue.length == 0) wait(false);
 					}
+					checkIndex++;
 				}, checkGenerationInterval);
 			}
 
