@@ -1680,6 +1680,7 @@
 				let { state, id } = await res.json();
 
 				playAnimation(resImg, "slam");
+				resImg.removeClass("generating errored");
 				if (res.ok && state != "failed") {
 					resImg.addClass("generating");
 					genQueue.push(id);
