@@ -1697,7 +1697,7 @@
 					let finished = await checkGeneration(id, resImg);
 					if (finished || checkIndex == maxGenerationChecks) {
 						clearInterval(checkIntervalId);
-						if (checkIndex == maxGenerationChecks) resImg.addClass("errored");
+						if (!finished && checkIndex == maxGenerationChecks) resImg.addClass("errored");
 
 						genQueue = genQueue.filter(q => q != id);
 						if (genQueue.length == 0) wait(false);
