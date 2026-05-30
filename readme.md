@@ -1,6 +1,6 @@
 # giraaffes.github.io
 
-Egen GitHub Pages-side med flere diverse små og store sider, hvoraf de fleste nok ikke virker længere. Meget varierende kvalitet hvad angår koden...
+Personlig GitHub Pages med mine gamle hjemmesider, mange virker nok ikke længere. 
 
 Detektiv-corkboard designer: https://giraaffes.github.io/corkboard/select
 
