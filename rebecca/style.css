@@ -1,0 +1,120 @@
+@font-face {
+  font-family: coolFont;
+  /*src: url(chalk_board.ttf);*/
+  src: url(ChalkBoard-Regular.ttf);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: rgb(250, 223, 250);
+	font-family: coolFont;
+	letter-spacing: 1px;
+}
+
+@media (max-width: 1400px) {
+	body {
+		background-color: rgb(228, 188, 228);
+	}
+}
+
+.letter {
+	max-width: 1400px;
+	margin: 0 auto;
+
+	background-color: rgb(228, 188, 228);
+	padding-top: 6rem;
+	padding-bottom: 2rem;
+
+	position: relative;
+}
+
+.text-section {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	justify-content: space-around;
+
+	width: 950px;
+	margin: 0 auto;
+	padding: 0 2rem;
+	margin-bottom: 2rem;
+}
+
+.text-section > .main {
+	width: 550px;
+	padding: 0 2rem;
+}
+
+.text-section > .side {
+	position: relative;
+	width: 200px;
+	
+	display: flex;
+	flex-direction: column;
+}
+
+.text-section > .side > * {
+	width: 100%;
+}
+
+.text-section p {
+	font-size: 2.5rem;
+	color: rgb(6, 101, 165);
+	margin: 1rem 0;
+}
+
+.text-section a {
+	color: inherit;
+}
+
+.text-section a:hover {
+	color: brown;
+}
+
+.text-section span.word {
+	white-space: nowrap;
+}
+
+.text-section span.woops-1 {
+	display: inline-block;
+  transform: translateY(2px) rotate(2deg);
+}
+
+.text-section span.woops-2 {
+	display: inline-block;
+  transform: translateY(-3px) rotate(3deg);
+  font-size: 0.95em;
+}
+
+.image-section {
+	width: 600px;
+	margin: 0 auto;
+
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+
+.image-section img {
+	width: 100%;
+
+	filter: drop-shadow(5px 5px 5px);
+	color: black;
+}
+
+.image-section p {
+	max-width: 500px;
+	margin: 0 auto;
+	text-align: center;
+	font-size: 1.75rem;
+	color: rgb(52, 143, 52);
+}
